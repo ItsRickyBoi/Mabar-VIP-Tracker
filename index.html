@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DonTrack — ML Donation Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07080f;
+    --surface: #0d1020;
+    --surface2: #131628;
+    --border: #1e2540;
+    --accent: #f5a623;
+    --accent2: #e8395e;
+    --vip: #3b82f6;
+    --vvip: #a855f7;
+    --text: #e8eaf6;
+    --muted: #6b7280;
+    --success: #22c55e;
+    --glow: rgba(245,166,35,0.15);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(245,166,35,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 90% 80%, rgba(168,85,247,0.06) 0%, transparent 60%);
+  }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,16,32,0.9);
+    backdrop-filter: blur(10px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); }
+  .logo span { color: var(--text); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 500; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); transition: all 0.3s; }
+  .status-dot.connected { background: var(--success); box-shadow: 0 0 8px var(--success); animation: pulse 2s infinite; }
+  .status-pill.connected { color: var(--success); }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  main { max-width: 1000px; margin: 0 auto; padding: 40px 24px; }
+  .step { display: none; }
+  .step.active { display: block; }
+  .step-title { font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; }
+  .step-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; margin-bottom: 20px; }
+  .card-title { font-family: 'Rajdhani', sans-serif; font-size: 1.05rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+  .card-title::before { content: ''; display: block; width: 3px; height: 18px; background: var(--accent); border-radius: 2px; }
+
+  .form-row { display: flex; gap: 16px; margin-bottom: 16px; }
+  .field { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  label { font-size: 0.78rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+  input, select { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Exo 2', sans-serif; font-size: 0.95rem; padding: 11px 14px; outline: none; transition: border-color 0.2s, box-shadow 0.2s; width: 100%; }
+  input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow); }
+  input::placeholder { color: var(--muted); }
+  select option { background: var(--surface2); }
+
+  .input-prefix-wrap { position: relative; display: flex; align-items: center; }
+  .input-prefix { position: absolute; left: 14px; color: var(--muted); font-size: 0.9rem; pointer-events: none; font-family: 'Exo 2', sans-serif; }
+  .input-prefix-wrap input { padding-left: 56px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 28px; border: none; border-radius: 8px; font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .btn-primary { background: var(--accent); color: #07080f; }
+  .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-sm { padding: 6px 14px; font-size: 0.82rem; letter-spacing: 1px; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+  .btn-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .badge-vip { background: rgba(59,130,246,0.15); color: var(--vip); border: 1px solid rgba(59,130,246,0.3); }
+  .badge-vvip { background: rgba(168,85,247,0.15); color: var(--vvip); border: 1px solid rgba(168,85,247,0.3); }
+
+  .calc-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .calc-preview .calc-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .calc-preview .calc-value { font-family: 'Rajdhani', sans-serif; font-size: 2rem; font-weight: 700; color: var(--accent); }
+
+  .stepper { display: flex; align-items: center; gap: 8px; }
+  .stepper-btn { width: 32px; height: 32px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .stepper-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .stepper-val { min-width: 48px; text-align: center; font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+
+  /* FILTER BAR */
+  .filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .filter-btn { padding: 7px 18px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 0.85rem; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active-all { background: rgba(245,166,35,0.15); border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active-vip { background: rgba(59,130,246,0.15); border-color: var(--vip); color: var(--vip); }
+  .filter-btn.active-vvip { background: rgba(168,85,247,0.15); border-color: var(--vvip); color: var(--vvip); }
+  .filter-search { flex: 1; min-width: 160px; }
+  .filter-search input { padding: 8px 14px; font-size: 0.88rem; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-family: 'Rajdhani', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 10px 14px; border-bottom: 1px solid rgba(30,37,64,0.5); font-size: 0.88rem; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.donor-row:hover td { background: rgba(245,166,35,0.03); }
+  .empty-row td { text-align: center; color: var(--muted); padding: 40px; font-size: 0.9rem; }
+
+  /* Inline game stepper in table */
+  .game-stepper { display: flex; align-items: center; gap: 5px; }
+  .game-stepper button { width: 26px; height: 26px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); border-radius: 5px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .game-stepper button:hover { border-color: var(--accent); color: var(--accent); }
+  .game-stepper .gval { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--accent); min-width: 32px; text-align: center; }
+  .saving-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; animation: saving 0.8s ease infinite; }
+  @keyframes saving { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.7)} }
+
+  .alert { padding: 12px 16px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 16px; display: none; }
+  .alert.show { display: flex; align-items: center; gap: 10px; }
+  .alert-error { background: rgba(232,57,94,0.1); border: 1px solid rgba(232,57,94,0.3); color: #f87171; }
+  .alert-success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: var(--success); }
+  .alert-info { background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.25); color: var(--accent); }
+
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+  .summary-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .summary-item .s-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .summary-item .s-val { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 600; }
+
+  #toast { position: fixed; bottom: 28px; right: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; font-size: 0.88rem; display: none; align-items: center; gap: 10px; z-index: 999; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: slideIn 0.3s ease; max-width: 320px; }
+  #toast.show { display: flex; }
+  #toast.toast-success { border-color: rgba(34,197,94,0.4); color: var(--success); }
+  #toast.toast-error { border-color: rgba(232,57,94,0.4); color: #f87171; }
+  #toast.toast-info { border-color: rgba(245,166,35,0.4); color: var(--accent); }
+  @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  .spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); border-top-color: currentColor; animation: spin 0.7s linear infinite; display: none; flex-shrink: 0; }
+  .spinner.show { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .steps-nav { display: flex; align-items: center; gap: 0; margin-bottom: 40px; }
+  .steps-nav .sn-item { display: flex; align-items: center; gap: 10px; flex: 1; }
+  .sn-num { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.9rem; border: 2px solid var(--border); color: var(--muted); transition: all 0.3s; flex-shrink: 0; }
+  .sn-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); transition: all 0.3s; }
+  .sn-line { flex: 1; height: 1px; background: var(--border); margin: 0 8px; transition: all 0.3s; }
+  .sn-item.done .sn-num { background: var(--accent); border-color: var(--accent); color: #07080f; }
+  .sn-item.done .sn-label { color: var(--accent); }
+  .sn-item.active .sn-num { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 12px var(--glow); }
+  .sn-item.active .sn-label { color: var(--text); }
+
+  .help-box { background: rgba(245,166,35,0.05); border: 1px solid rgba(245,166,35,0.2); border-radius: 8px; padding: 16px 18px; font-size: 0.84rem; line-height: 1.7; color: #c8a96a; margin-bottom: 16px; }
+  .help-box strong { color: var(--accent); }
+
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .section-header h2 { font-family: 'Rajdhani', sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent); }
+  .total-count { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 99px; font-size: 0.78rem; color: var(--muted); }
+  .total-count span { color: var(--accent); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.95rem; }
+
+  .load-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 8px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px; }
+
+  /* Date group header in table */
+  .date-group-row td { background: rgba(245,166,35,0.05); color: var(--accent); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 14px; border-bottom: 1px solid var(--border); }
+
+  @media (max-width: 700px) {
+    main { padding: 24px 16px; }
+    .form-row { flex-direction: column; }
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+    header { padding: 14px 16px; }
+    .steps-nav .sn-label { display: none; }
+    .filter-bar { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Don<span>Track</span></div>
+  <div class="header-right">
+    <div class="status-pill" id="statusPill">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Belum Terhubung</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <div class="steps-nav">
+    <div class="sn-item active" id="nav1">
+      <div class="sn-num">1</div>
+      <div class="sn-label">Spreadsheet</div>
+    </div>
+    <div class="sn-line" id="line1"></div>
+    <div class="sn-item" id="nav2">
+      <div class="sn-num">2</div>
+      <div class="sn-label">Harga</div>
+    </div>
+    <div class="sn-line" id="line2"></div>
+    <div class="sn-item" id="nav3">
+      <div class="sn-num">3</div>
+      <div class="sn-label">Input Donasi</div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 1 ══ -->
+  <div class="step active" id="step1">
+    <div class="step-title">Hubungkan Google Spreadsheet</div>
+    <div class="step-sub">Masukkan URL Google Apps Script Web App untuk menghubungkan spreadsheet.</div>
+
+    <div class="help-box">
+      <strong>URL Spreadsheet & Apps Script sudah dikonfigurasi.</strong><br>
+      Klik <strong>Hubungkan</strong> untuk memulai. Data lama dari spreadsheet akan otomatis dimuat.
+    </div>
+
+    <div id="alert1" class="alert alert-error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="alert1Text"></span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Koneksi Apps Script</div>
+      <div class="field">
+        <label>Google Apps Script Web App URL</label>
+        <input type="url" id="scriptUrlInput" placeholder="https://script.google.com/macros/s/..." />
+      </div>
+      <div class="field" style="margin-top:14px;">
+        <label>Nama Sheet (Tab)</label>
+        <input type="text" id="sheetNameInput" placeholder="Sheet1" value="Sheet1" />
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="connectSheet()">
+          <span class="spinner" id="spinner1"></span>
+          Hubungkan & Muat Data
+        </button>
+        <button class="btn btn-secondary" onclick="useLocalMode()">Mode Lokal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2 ══ -->
+  <div class="step" id="step2">
+    <div class="step-title">Setup Harga & Tier</div>
+    <div class="step-sub">Atur harga per game untuk setiap tier donasi.</div>
+
+    <div id="alert2" class="alert alert-error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="alert2Text"></span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Harga VIP</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Harga per Game (VIP)</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">Rp</span>
+            <input type="number" id="vipPrice" placeholder="5000" min="1" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Min. Donasi VIP</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">Rp</span>
+            <input type="number" id="vipMin" placeholder="5000" min="0" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Harga VVIP</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Harga per Game (VVIP)</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">Rp</span>
+            <input type="number" id="vvipPrice" placeholder="10000" min="1" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Min. Donasi VVIP</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">Rp</span>
+            <input type="number" id="vvipMin" placeholder="10000" min="0" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="savePricing()">Simpan & Lanjut</button>
+      <button class="btn btn-secondary" onclick="goToStep(1)">Kembali</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3 ══ -->
+  <div class="step" id="step3">
+    <div class="step-title">Input Donasi</div>
+    <div class="step-sub">Masukkan data donatur baru setiap kali ada yang bergabung.</div>
+
+    <div class="summary-grid" id="priceSummary"></div>
+
+    <div id="loadBanner" class="load-banner" style="display:none;">
+      <span class="spinner show" style="border-top-color:#93c5fd"></span>
+      <span id="loadBannerText">Memuat data dari spreadsheet...</span>
+    </div>
+
+    <div id="alert3" class="alert alert-error">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span id="alert3Text"></span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Data Donatur Baru</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Nama Donatur</label>
+          <input type="text" id="donorName" placeholder="Nama lengkap donatur" />
+        </div>
+        <div class="field">
+          <label>Mobile Legend ID</label>
+          <input type="text" id="mlId" placeholder="ID#Nickname" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Jumlah Donasi</label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">Rp</span>
+            <input type="number" id="donAmount" placeholder="15000" min="0" oninput="calcGames()" />
+          </div>
+        </div>
+        <div class="field">
+          <label>Tier</label>
+          <select id="donTier" onchange="calcGames()">
+            <option value="VIP">VIP</option>
+            <option value="VVIP">VVIP</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="calc-preview">
+        <div>
+          <div class="calc-label">Game Terhitung</div>
+          <div class="calc-value" id="calcBase">0</div>
+        </div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <div>
+          <div class="calc-label">Total Game (edit jika ada bonus)</div>
+          <div class="stepper">
+            <button class="stepper-btn" onclick="adjustGames(-1)">−</button>
+            <div class="stepper-val" id="gameCount">0</div>
+            <button class="stepper-btn" onclick="adjustGames(1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="submitBtn" onclick="submitDonation()">
+          <span class="spinner" id="spinner3"></span>
+          Tambah Donatur
+        </button>
+        <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
+        <button class="btn btn-secondary" onclick="goToStep(2)" style="margin-left:auto;">⚙ Ubah Harga</button>
+      </div>
+    </div>
+
+    <!-- DAFTAR VIP/VVIP -->
+    <div class="divider"></div>
+    <div class="section-header">
+      <h2>Daftar VIP / VVIP Game</h2>
+      <div class="total-count">Tampil: <span id="totalCount">0</span></div>
+      <div class="total-count" style="margin-left:auto;">
+        <span class="spinner" id="refreshSpinner" style="width:12px;height:12px;border-width:1.5px;border-top-color:var(--accent);"></span>
+      </div>
+      <button class="btn btn-secondary btn-sm" onclick="loadFromSheet()" title="Muat ulang dari spreadsheet">↻ Refresh</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportCSV()" id="exportBtn">⬇ CSV</button>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-bar">
+      <button class="filter-btn active-all" id="fb-all" onclick="setFilter('all')">Semua</button>
+      <button class="filter-btn" id="fb-vip" onclick="setFilter('vip')">VIP</button>
+      <button class="filter-btn" id="fb-vvip" onclick="setFilter('vvip')">VVIP</button>
+      <div class="filter-search">
+        <input type="text" id="filterSearch" placeholder="Cari nama / ML ID..." oninput="renderTable()" />
+      </div>
+      <select id="filterDate" onchange="renderTable()" style="max-width:160px; padding:8px 12px; font-size:0.85rem;">
+        <option value="">Semua Tanggal</option>
+      </select>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nama</th>
+              <th>ML ID</th>
+              <th>Donasi</th>
+              <th>Tier</th>
+              <th>Game</th>
+              <th>Waktu</th>
+              <th>Hapus</th>
+            </tr>
+          </thead>
+          <tbody id="donorTable">
+            <tr class="empty-row"><td colspan="8">Belum ada data. Mulai input atau refresh dari spreadsheet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn btn-secondary" onclick="clearSession()">🗑 Hapus Semua (Lokal)</button>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// CONFIG — hardcoded defaults
+// ═══════════════════════════════════════════════════════
+const DEFAULT_SCRIPT_URL = '';
+const DEFAULT_SHEET_NAME = 'Sheet1';
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const state = {
+  scriptUrl: '',
+  sheetName: DEFAULT_SHEET_NAME,
+  isLocalMode: false,
+  pricing: { vip: 0, vvip: 0, vipMin: 0, vvipMin: 0 },
+  donors: [],          // all donors (merged from sheet + session)
+  currentGames: 0,
+  activeFilter: 'all',
+};
+
+// Load persisted settings
+try {
+  const saved = JSON.parse(localStorage.getItem('dontrack_state') || '{}');
+  if (saved.scriptUrl) state.scriptUrl = saved.scriptUrl;
+  if (saved.sheetName) state.sheetName = saved.sheetName;
+  if (saved.isLocalMode) state.isLocalMode = saved.isLocalMode;
+  if (saved.pricing && saved.pricing.vip) state.pricing = saved.pricing;
+} catch(e){}
+
+// ═══════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════
+function goToStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  for (let i = 1; i <= 3; i++) {
+    const nav = document.getElementById('nav' + i);
+    nav.classList.remove('done', 'active');
+    if (i < n) nav.classList.add('done');
+    else if (i === n) nav.classList.add('active');
+    const line = document.getElementById('line' + i);
+    if (line) line.style.background = i < n ? 'var(--accent)' : 'var(--border)';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// STEP 1: CONNECT
+// ═══════════════════════════════════════════════════════
+async function connectSheet() {
+  const url = document.getElementById('scriptUrlInput').value.trim();
+  const sheetName = document.getElementById('sheetNameInput').value.trim() || DEFAULT_SHEET_NAME;
+  hideAlert('alert1');
+
+  if (!url) { showAlert('alert1', 'Masukkan URL Apps Script Web App.'); return; }
+
+  state.scriptUrl = url;
+  state.sheetName = sheetName;
+  state.isLocalMode = false;
+  saveState();
+
+  showSpinner('spinner1', true);
+
+  // Verify connection with a ping
+  const ok = await pingScript(url);
+  showSpinner('spinner1', false);
+
+  if (!ok) {
+    showAlert('alert1', 'Tidak bisa menjangkau Apps Script. Pastikan sudah di-deploy dan "Execute as: Me, Who has access: Anyone".');
+    return;
+  }
+
+  onConnected('Apps Script');
+}
+
+async function pingScript(url) {
+  try {
+    const res = await fetchWithTimeout(url + '?action=ping', { method: 'GET' }, 8000);
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.status === 'ok';
+  } catch(e) {
+    return false;
+  }
+}
+
+function useLocalMode() {
+  state.isLocalMode = true;
+  state.sheetName = document.getElementById('sheetNameInput').value.trim() || DEFAULT_SHEET_NAME;
+  saveState();
+  onConnected('Lokal (CSV Only)');
+}
+
+async function onConnected(mode) {
+  document.getElementById('statusDot').classList.add('connected');
+  document.getElementById('statusPill').classList.add('connected');
+  document.getElementById('statusText').textContent = 'Terhubung · ' + mode;
+  showToast('Terhubung! Mode: ' + mode, 'success');
+
+  if (state.pricing.vip > 0 || state.pricing.vvip > 0) {
+    goToStep(3);
+    renderPriceSummary();
+    await loadFromSheet();
+  } else {
+    goToStep(2);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// LOAD DATA FROM SHEET
+// ═══════════════════════════════════════════════════════
+async function loadFromSheet() {
+  if (state.isLocalMode) { renderTable(); return; }
+
+  showLoadBanner('Memuat data dari spreadsheet...');
+  showSpinner('refreshSpinner', true);
+
+  try {
+    const url = state.scriptUrl + '?action=getAll&sheetName=' + encodeURIComponent(state.sheetName);
+    const res = await fetchWithTimeout(url, { method: 'GET' }, 12000);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    if (data.success && Array.isArray(data.rows)) {
+      state.donors = data.rows.map(r => ({
+        rowIndex: r.rowIndex,
+        name: r.name || '',
+        mlId: r.mlId || '',
+        amount: parseInt(r.amount) || 0,
+        tier: r.tier || 'VIP',
+        games: parseInt(r.games) || 0,
+        timestamp: r.timestamp || '',
+      }));
+      buildDateFilter();
+      renderTable();
+      hideLoadBanner();
+      showToast(`${state.donors.length} data dimuat dari spreadsheet.`, 'success');
+    } else {
+      throw new Error(data.error || 'Respons tidak valid');
+    }
+  } catch(e) {
+    hideLoadBanner();
+    showToast('Gagal muat data: ' + e.message, 'error');
+  }
+  showSpinner('refreshSpinner', false);
+}
+
+// ═══════════════════════════════════════════════════════
+// STEP 2: PRICING
+// ═══════════════════════════════════════════════════════
+function savePricing() {
+  const vip  = parseInt(document.getElementById('vipPrice').value);
+  const vvip = parseInt(document.getElementById('vvipPrice').value);
+  const vipMin  = parseInt(document.getElementById('vipMin').value)  || 0;
+  const vvipMin = parseInt(document.getElementById('vvipMin').value) || 0;
+  hideAlert('alert2');
+  if (!vip  || vip  < 1) { showAlert('alert2', 'Masukkan harga per game VIP yang valid.');  return; }
+  if (!vvip || vvip < 1) { showAlert('alert2', 'Masukkan harga per game VVIP yang valid.'); return; }
+  state.pricing = { vip, vvip, vipMin, vvipMin };
+  saveState();
+  showToast('Harga berhasil disimpan!', 'success');
+  goToStep(3);
+  renderPriceSummary();
+}
+
+function renderPriceSummary() {
+  const { vip, vvip } = state.pricing;
+  const vipCount  = state.donors.filter(d => d.tier === 'VIP').length;
+  const vvipCount = state.donors.filter(d => d.tier === 'VVIP').length;
+  document.getElementById('priceSummary').innerHTML = `
+    <div class="summary-item">
+      <div class="s-label">Harga / Game VIP</div>
+      <div class="s-val" style="color:var(--vip)">Rp ${formatRp(vip)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="s-label">Harga / Game VVIP</div>
+      <div class="s-val" style="color:var(--vvip)">Rp ${formatRp(vvip)}</div>
+    </div>
+    <div class="summary-item">
+      <div class="s-label">Total Donatur VIP</div>
+      <div class="s-val" style="color:var(--vip)">${vipCount}</div>
+    </div>
+    <div class="summary-item">
+      <div class="s-label">Total Donatur VVIP</div>
+      <div class="s-val" style="color:var(--vvip)">${vvipCount}</div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════
+// STEP 3: INPUT
+// ═══════════════════════════════════════════════════════
+function calcGames() {
+  const amount = parseInt(document.getElementById('donAmount').value) || 0;
+  const tier   = document.getElementById('donTier').value;
+  const price  = tier === 'VIP' ? state.pricing.vip : state.pricing.vvip;
+  const games  = price > 0 ? Math.floor(amount / price) : 0;
+  state.currentGames = games;
+  document.getElementById('calcBase').textContent = games;
+  document.getElementById('gameCount').textContent = games;
+}
+
+function adjustGames(delta) {
+  const v = Math.max(0, (parseInt(document.getElementById('gameCount').textContent) || 0) + delta);
+  document.getElementById('gameCount').textContent = v;
+  state.currentGames = v;
+}
+
+async function submitDonation() {
+  const name   = document.getElementById('donorName').value.trim();
+  const mlId   = document.getElementById('mlId').value.trim();
+  const amount = parseInt(document.getElementById('donAmount').value) || 0;
+  const tier   = document.getElementById('donTier').value;
+  const games  = parseInt(document.getElementById('gameCount').textContent) || 0;
+  hideAlert('alert3');
+
+  if (!name)      { showAlert('alert3', 'Nama donatur tidak boleh kosong.');        return; }
+  if (!mlId)      { showAlert('alert3', 'Mobile Legend ID tidak boleh kosong.');    return; }
+  if (amount < 1) { showAlert('alert3', 'Jumlah donasi harus lebih dari 0.');       return; }
+
+  const timestamp = new Date().toLocaleString('id-ID');
+  const entry = { name, mlId, amount, tier, games, timestamp };
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  showSpinner('spinner3', true);
+
+  if (!state.isLocalMode && state.scriptUrl) {
+    try {
+      const res = await fetchWithTimeout(state.scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' }, // avoid CORS preflight
+        body: JSON.stringify({ action: 'append', sheetName: state.sheetName, ...entry }),
+      }, 12000);
+
+      let data;
+      try { data = await res.json(); } catch(e) { data = { success: true }; } // no-cors fallback
+
+      if (data.success === false) throw new Error(data.error || 'Server menolak permintaan');
+
+      entry.rowIndex = data.rowIndex || null;
+      state.donors.unshift(entry);
+      buildDateFilter();
+      renderTable();
+      renderPriceSummary();
+      showToast(`${name} ditambahkan! (${games} game, data tersimpan ke spreadsheet)`, 'success');
+      resetForm();
+    } catch(e) {
+      showAlert('alert3', 'Gagal menyimpan ke spreadsheet: ' + e.message + '. Cek koneksi atau deploy ulang Apps Script.');
+    }
+  } else {
+    // Local mode
+    state.donors.unshift(entry);
+    buildDateFilter();
+    renderTable();
+    renderPriceSummary();
+    showToast(`${name} ditambahkan! (${games} game — mode lokal)`, 'success');
+    resetForm();
+  }
+
+  showSpinner('spinner3', false);
+  btn.disabled = false;
+}
+
+function resetForm() {
+  document.getElementById('donorName').value = '';
+  document.getElementById('mlId').value = '';
+  document.getElementById('donAmount').value = '';
+  document.getElementById('donTier').value = 'VIP';
+  document.getElementById('calcBase').textContent = '0';
+  document.getElementById('gameCount').textContent = '0';
+  state.currentGames = 0;
+  hideAlert('alert3');
+}
+
+// ═══════════════════════════════════════════════════════
+// UPDATE GAMES (inline stepper per row)
+// ═══════════════════════════════════════════════════════
+const pendingUpdates = {}; // rowIndex → timer
+
+async function updateGames(idx, delta) {
+  const donor = state.donors[idx];
+  if (!donor) return;
+
+  const newGames = Math.max(0, (donor.games || 0) + delta);
+  donor.games = newGames;
+  renderTable();
+
+  if (state.isLocalMode || !state.scriptUrl) return;
+  if (!donor.rowIndex) {
+    showToast('Baris tidak diketahui — tidak bisa update spreadsheet.', 'error');
+    return;
+  }
+
+  // Debounce: wait 800ms before sending
+  clearTimeout(pendingUpdates[donor.rowIndex]);
+  pendingUpdates[donor.rowIndex] = setTimeout(async () => {
+    try {
+      const res = await fetchWithTimeout(state.scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: 'updateGames',
+          sheetName: state.sheetName,
+          rowIndex: donor.rowIndex,
+          games: donor.games,
+        }),
+      }, 10000);
+      let data;
+      try { data = await res.json(); } catch(e) { data = { success: true }; }
+      if (data.success === false) throw new Error(data.error);
+      showToast(`Game ${donor.name} diupdate: ${donor.games} game`, 'success');
+    } catch(e) {
+      showToast('Gagal update spreadsheet: ' + e.message, 'error');
+    }
+  }, 800);
+}
+
+// ═══════════════════════════════════════════════════════
+// FILTER
+// ═══════════════════════════════════════════════════════
+function setFilter(f) {
+  state.activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.className = 'filter-btn';
+  });
+  document.getElementById('fb-' + f).className = 'filter-btn active-' + f;
+  renderTable();
+}
+
+function buildDateFilter() {
+  const sel = document.getElementById('filterDate');
+  const current = sel.value;
+  // Extract unique dates
+  const dates = [...new Set(state.donors.map(d => {
+    if (!d.timestamp) return null;
+    // timestamp format: "DD/MM/YYYY, HH.MM.SS" (id-ID locale)
+    const parts = d.timestamp.split(',')[0].trim();
+    return parts;
+  }).filter(Boolean))].sort().reverse();
+
+  sel.innerHTML = '<option value="">Semua Tanggal</option>' +
+    dates.map(d => `<option value="${esc(d)}" ${d === current ? 'selected' : ''}>${d}</option>`).join('');
+}
+
+function getFilteredDonors() {
+  const f  = state.activeFilter;
+  const q  = (document.getElementById('filterSearch')?.value || '').toLowerCase();
+  const fd = (document.getElementById('filterDate')?.value  || '');
+
+  return state.donors.filter(d => {
+    if (f === 'vip'  && d.tier !== 'VIP')  return false;
+    if (f === 'vvip' && d.tier !== 'VVIP') return false;
+    if (q && !d.name.toLowerCase().includes(q) && !d.mlId.toLowerCase().includes(q)) return false;
+    if (fd) {
+      const dDate = (d.timestamp || '').split(',')[0].trim();
+      if (dDate !== fd) return false;
+    }
+    return true;
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER TABLE
+// ═══════════════════════════════════════════════════════
+function renderTable() {
+  const tbody = document.getElementById('donorTable');
+  const filtered = getFilteredDonors();
+  document.getElementById('totalCount').textContent = filtered.length;
+  renderPriceSummary();
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Tidak ada data yang cocok.</td></tr>';
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  filtered.forEach((d, localIdx) => {
+    const date = d.timestamp ? d.timestamp.split(',')[0].trim() : 'Tidak Diketahui';
+    if (!groups[date]) groups[date] = [];
+    groups[date].push({ d, globalIdx: state.donors.indexOf(d) });
+  });
+
+  let html = '';
+  let rowNum = 1;
+
+  Object.entries(groups).forEach(([date, items]) => {
+    html += `<tr class="date-group-row"><td colspan="8">📅 ${esc(date)}</td></tr>`;
+    items.forEach(({ d, globalIdx }) => {
+      const tierClass = d.tier.toLowerCase();
+      const time = d.timestamp ? d.timestamp.split(',')[1]?.trim() || '' : '';
+      html += `
+        <tr class="donor-row">
+          <td style="color:var(--muted); font-size:0.8rem">${rowNum++}</td>
+          <td style="font-weight:500">${esc(d.name)}</td>
+          <td style="font-family:monospace; font-size:0.82rem; color:var(--muted)">${esc(d.mlId)}</td>
+          <td style="color:var(--accent)">Rp ${formatRp(d.amount)}</td>
+          <td><span class="badge badge-${tierClass}">${d.tier}</span></td>
+          <td>
+            <div class="game-stepper">
+              <button onclick="updateGames(${globalIdx}, -1)">−</button>
+              <span class="gval">${d.games}</span>
+              <button onclick="updateGames(${globalIdx}, 1)">+</button>
+            </div>
+          </td>
+          <td style="color:var(--muted); font-size:0.78rem">${esc(time)}</td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="deleteDonor(${globalIdx})" title="Hapus baris ini" style="padding:4px 10px; color:var(--accent2); border-color:rgba(232,57,94,0.3);">✕</button>
+          </td>
+        </tr>`;
+    });
+  });
+
+  tbody.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════════════════
+// DELETE ROW
+// ═══════════════════════════════════════════════════════
+async function deleteDonor(idx) {
+  const donor = state.donors[idx];
+  if (!donor) return;
+  if (!confirm(`Hapus "${donor.name}" dari daftar?`)) return;
+
+  // Remove from sheet if connected
+  if (!state.isLocalMode && state.scriptUrl && donor.rowIndex) {
+    try {
+      await fetchWithTimeout(state.scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'deleteRow', sheetName: state.sheetName, rowIndex: donor.rowIndex }),
+      }, 10000);
+    } catch(e) {
+      showToast('Gagal hapus dari spreadsheet, tapi dihapus secara lokal.', 'error');
+    }
+  }
+
+  state.donors.splice(idx, 1);
+  // Re-number rowIndex from sheet — no action needed, indices stable
+  buildDateFilter();
+  renderTable();
+  showToast(`${donor.name} dihapus.`, 'success');
+}
+
+// ═══════════════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════════════
+function exportCSV() {
+  const filtered = getFilteredDonors();
+  if (filtered.length === 0) { showToast('Tidak ada data untuk diexport.', 'error'); return; }
+  const header = ['No','Nama Donatur','ML ID','Jumlah Donasi (Rp)','Tier','Jumlah Game','Waktu'];
+  const rows = filtered.map((d, i) => [i+1, d.name, d.mlId, d.amount, d.tier, d.games, d.timestamp]);
+  const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `dontrack_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('CSV berhasil diexport!', 'success');
+}
+
+function clearSession() {
+  if (!confirm('Hapus semua data lokal? Data di spreadsheet TIDAK terpengaruh.')) return;
+  state.donors = [];
+  buildDateFilter();
+  renderTable();
+  showToast('Data lokal dihapus.', 'success');
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+function formatRp(n) { return Number(n).toLocaleString('id-ID'); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showAlert(id, msg, type='error') {
+  const el = document.getElementById(id);
+  el.className = 'alert alert-' + type + ' show';
+  const tx = document.getElementById(id + 'Text');
+  if (tx) tx.textContent = msg; else el.textContent = msg;
+}
+function hideAlert(id) { document.getElementById(id).classList.remove('show'); }
+function showSpinner(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('show', show);
+}
+function showLoadBanner(msg) {
+  const b = document.getElementById('loadBanner');
+  document.getElementById('loadBannerText').textContent = msg;
+  b.style.display = 'flex';
+}
+function hideLoadBanner() { document.getElementById('loadBanner').style.display = 'none'; }
+
+let toastTimer;
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast-' + type + ' show';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('dontrack_state', JSON.stringify({
+      scriptUrl: state.scriptUrl,
+      sheetName: state.sheetName,
+      isLocalMode: state.isLocalMode,
+      pricing: state.pricing,
+    }));
+  } catch(e){}
+}
+
+function fetchWithTimeout(url, options, ms) {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), ms);
+  return fetch(url, { ...options, signal: ctrl.signal }).finally(() => clearTimeout(id));
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+window.onload = async function() {
+  // Pre-fill inputs
+  document.getElementById('scriptUrlInput').value = state.scriptUrl;
+  document.getElementById('sheetNameInput').value = state.sheetName;
+  if (state.pricing.vip)    document.getElementById('vipPrice').value  = state.pricing.vip;
+  if (state.pricing.vvip)   document.getElementById('vvipPrice').value = state.pricing.vvip;
+  if (state.pricing.vipMin) document.getElementById('vipMin').value    = state.pricing.vipMin;
+  if (state.pricing.vvipMin)document.getElementById('vvipMin').value   = state.pricing.vvipMin;
+
+  // If already configured → jump to step 3
+  if (state.scriptUrl && state.pricing.vip > 0) {
+    const mode = state.isLocalMode ? 'Lokal' : 'Apps Script';
+    document.getElementById('statusDot').classList.add('connected');
+    document.getElementById('statusPill').classList.add('connected');
+    document.getElementById('statusText').textContent = 'Terhubung · ' + mode;
+    goToStep(3);
+    renderPriceSummary();
+    if (!state.isLocalMode) await loadFromSheet();
+    else renderTable();
+  }
+};
+</script>
+
+<!-- ═══════════════════════════════════════════════════════
+     APPS SCRIPT CODE (paste ini ke Apps Script Editor)
+     ═══════════════════════════════════════════════════════
+function doGet(e) {
+  const action = e.parameter.action || '';
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheetName = e.parameter.sheetName || 'Sheet1';
+  const sheet = ss.getSheetByName(sheetName) || ss.getSheets()[0];
+
+  if (action === 'ping') {
+    return json({status:'ok'});
+  }
+
+  if (action === 'getAll') {
+    const last = sheet.getLastRow();
+    if (last < 2) return json({success:true, rows:[]});
+    const data = sheet.getRange(2, 1, last - 1, 8).getValues();
+    const rows = data.map((r,i) => ({
+      rowIndex: i + 2,
+      name: r[1], mlId: r[2], amount: r[3],
+      tier: r[4], games: r[5], timestamp: r[6]
+    }));
+    return json({success:true, rows});
+  }
+
+  return json({status:'ok'});
+}
+
+function doPost(e) {
+  try {
+    const body = JSON.parse(e.postData.contents);
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const sheetName = body.sheetName || 'Sheet1';
+    const sheet = ss.getSheetByName(sheetName) || ss.getSheets()[0];
+    const action = body.action || 'append';
+
+    if (action === 'append') {
+      if (sheet.getLastRow() === 0) {
+        sheet.appendRow(['No','Nama Donatur','ML ID','Jumlah Donasi (Rp)','Tier','Jumlah Game','Waktu']);
+      }
+      const rowIndex = sheet.getLastRow() + 1;
+      sheet.appendRow([sheet.getLastRow(), body.name, body.mlId, body.amount, body.tier, body.games, body.timestamp]);
+      return json({success:true, rowIndex});
+    }
+
+    if (action === 'updateGames') {
+      sheet.getRange(body.rowIndex, 6).setValue(body.games);
+      return json({success:true});
+    }
+
+    if (action === 'deleteRow') {
+      sheet.deleteRow(body.rowIndex);
+      return json({success:true});
+    }
+
+    return json({success:false, error:'Unknown action'});
+  } catch(err) {
+    return json({success:false, error:err.toString()});
+  }
+}
+
+function json(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+-->
+</body>
+</html>
