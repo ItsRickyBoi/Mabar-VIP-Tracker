@@ -74,13 +74,17 @@
   .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
   .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
   .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: rgba(232,57,94,0.15); color: var(--accent2); border: 1px solid rgba(232,57,94,0.3); }
+  .btn-danger:hover { background: rgba(232,57,94,0.25); }
   .btn-sm { padding: 6px 14px; font-size: 0.82rem; letter-spacing: 1px; }
   .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
   .btn-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
 
-  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: default; }
   .badge-vip { background: rgba(59,130,246,0.15); color: var(--vip); border: 1px solid rgba(59,130,246,0.3); }
   .badge-vvip { background: rgba(168,85,247,0.15); color: var(--vvip); border: 1px solid rgba(168,85,247,0.3); }
+  .badge.clickable { cursor: pointer; transition: all 0.15s; }
+  .badge.clickable:hover { filter: brightness(1.3); transform: scale(1.05); }
 
   .calc-preview { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .calc-preview .calc-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
@@ -90,6 +94,25 @@
   .stepper-btn { width: 32px; height: 32px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
   .stepper-btn:hover { border-color: var(--accent); color: var(--accent); }
   .stepper-val { min-width: 48px; text-align: center; font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+
+  /* SHARE PANEL */
+  .share-panel {
+    background: linear-gradient(135deg, rgba(245,166,35,0.08) 0%, rgba(168,85,247,0.06) 100%);
+    border: 1px solid rgba(245,166,35,0.3);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 20px;
+  }
+  .share-panel.sharing { border-color: var(--success); background: linear-gradient(135deg, rgba(34,197,94,0.06) 0%, rgba(59,130,246,0.04) 100%); }
+  .share-panel-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .share-panel-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .share-panel.sharing .share-panel-title { color: var(--success); }
+  .share-url-row { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+  .share-url-box {
+    flex: 1; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 14px;
+    font-family: monospace; font-size: 0.82rem; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .share-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); display: inline-block; animation: pulse 1.5s infinite; flex-shrink: 0; }
 
   /* FILTER BAR */
   .filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
@@ -110,13 +133,10 @@
   tr.donor-row:hover td { background: rgba(245,166,35,0.03); }
   .empty-row td { text-align: center; color: var(--muted); padding: 40px; font-size: 0.9rem; }
 
-  /* Inline game stepper in table */
   .game-stepper { display: flex; align-items: center; gap: 5px; }
   .game-stepper button { width: 26px; height: 26px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); border-radius: 5px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
   .game-stepper button:hover { border-color: var(--accent); color: var(--accent); }
   .game-stepper .gval { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--accent); min-width: 32px; text-align: center; }
-  .saving-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; animation: saving 0.8s ease infinite; }
-  @keyframes saving { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.7)} }
 
   .alert { padding: 12px 16px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 16px; display: none; }
   .alert.show { display: flex; align-items: center; gap: 10px; }
@@ -129,7 +149,7 @@
   .summary-item .s-label { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
   .summary-item .s-val { font-family: 'Rajdhani', sans-serif; font-size: 1.2rem; font-weight: 600; }
 
-  #toast { position: fixed; bottom: 28px; right: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; font-size: 0.88rem; display: none; align-items: center; gap: 10px; z-index: 999; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: slideIn 0.3s ease; max-width: 320px; }
+  #toast { position: fixed; bottom: 28px; right: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; font-size: 0.88rem; display: none; align-items: center; gap: 10px; z-index: 999; box-shadow: 0 8px 32px rgba(0,0,0,0.4); animation: slideIn 0.3s ease; max-width: 340px; }
   #toast.show { display: flex; }
   #toast.toast-success { border-color: rgba(34,197,94,0.4); color: var(--success); }
   #toast.toast-error { border-color: rgba(232,57,94,0.4); color: #f87171; }
@@ -160,9 +180,15 @@
   .total-count span { color: var(--accent); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.95rem; }
 
   .load-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 8px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px; }
-
-  /* Date group header in table */
   .date-group-row td { background: rgba(245,166,35,0.05); color: var(--accent); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 14px; border-bottom: 1px solid var(--border); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(7,8,15,0.85); backdrop-filter: blur(4px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 460px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.5); animation: modalIn 0.2s ease; }
+  @keyframes modalIn { from { transform: scale(0.96) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+  .modal-title { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
+  .modal-sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 24px; }
 
   @media (max-width: 700px) {
     main { padding: 24px 16px; }
@@ -187,7 +213,6 @@
 </header>
 
 <main>
-
   <div class="steps-nav">
     <div class="sn-item active" id="nav1">
       <div class="sn-num">1</div>
@@ -211,8 +236,7 @@
     <div class="step-sub">Masukkan URL Google Apps Script Web App untuk menghubungkan spreadsheet.</div>
 
     <div class="help-box">
-      <strong>URL Spreadsheet & Apps Script sudah dikonfigurasi.</strong><br>
-      Klik <strong>Hubungkan</strong> untuk memulai. Data lama dari spreadsheet akan otomatis dimuat.
+      <strong>Cara Setup:</strong> Di Google Spreadsheet → Extensions → Apps Script → paste kode dari README → Deploy sebagai Web App (Execute as: Me, Who has access: Anyone) → copy URL deployment-nya ke sini.
     </div>
 
     <div id="alert1" class="alert alert-error">
@@ -242,8 +266,8 @@
 
   <!-- ══ STEP 2 ══ -->
   <div class="step" id="step2">
-    <div class="step-title">Setup Harga & Tier</div>
-    <div class="step-sub">Atur harga per game untuk setiap tier donasi.</div>
+    <div class="step-title">Setup Harga per Game</div>
+    <div class="step-sub">Atur harga per game untuk tier VIP dan VVIP.</div>
 
     <div id="alert2" class="alert alert-error">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -252,40 +276,22 @@
 
     <div class="card">
       <div class="card-title">Harga VIP</div>
-      <div class="form-row">
-        <div class="field">
-          <label>Harga per Game (VIP)</label>
-          <div class="input-prefix-wrap">
-            <span class="input-prefix">Rp</span>
-            <input type="number" id="vipPrice" placeholder="5000" min="1" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Min. Donasi VIP</label>
-          <div class="input-prefix-wrap">
-            <span class="input-prefix">Rp</span>
-            <input type="number" id="vipMin" placeholder="5000" min="0" />
-          </div>
+      <div class="field">
+        <label>Harga per Game (VIP)</label>
+        <div class="input-prefix-wrap">
+          <span class="input-prefix">Rp</span>
+          <input type="number" id="vipPrice" placeholder="5000" min="1" />
         </div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">Harga VVIP</div>
-      <div class="form-row">
-        <div class="field">
-          <label>Harga per Game (VVIP)</label>
-          <div class="input-prefix-wrap">
-            <span class="input-prefix">Rp</span>
-            <input type="number" id="vvipPrice" placeholder="10000" min="1" />
-          </div>
-        </div>
-        <div class="field">
-          <label>Min. Donasi VVIP</label>
-          <div class="input-prefix-wrap">
-            <span class="input-prefix">Rp</span>
-            <input type="number" id="vvipMin" placeholder="10000" min="0" />
-          </div>
+      <div class="field">
+        <label>Harga per Game (VVIP)</label>
+        <div class="input-prefix-wrap">
+          <span class="input-prefix">Rp</span>
+          <input type="number" id="vvipPrice" placeholder="10000" min="1" />
         </div>
       </div>
     </div>
@@ -302,6 +308,31 @@
     <div class="step-sub">Masukkan data donatur baru setiap kali ada yang bergabung.</div>
 
     <div class="summary-grid" id="priceSummary"></div>
+
+    <!-- ══ SHARE PANEL ══ -->
+    <div class="share-panel" id="sharePanel">
+      <div class="share-panel-header">
+        <div>
+          <div class="share-panel-title" id="sharePanelTitle">📡 Bagikan Daftar ke Penonton</div>
+          <div style="font-size:0.82rem; color:var(--muted); margin-top:4px;" id="sharePanelDesc">Aktifkan agar penonton bisa melihat daftar game mereka secara live.</div>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" id="shareStartBtn" onclick="startSharing()">
+            <span class="spinner" id="shareSpinner"></span>
+            Mulai Bagikan
+          </button>
+          <button class="btn btn-danger btn-sm" id="shareStopBtn" onclick="stopSharing()" style="display:none;">
+            ⬛ Stop Berbagi
+          </button>
+        </div>
+      </div>
+      <div class="share-url-row" id="shareUrlRow" style="display:none;">
+        <div class="share-live-dot"></div>
+        <div class="share-url-box" id="shareUrlBox"></div>
+        <button class="btn btn-secondary btn-sm" onclick="copyShareUrl()">Copy</button>
+        <button class="btn btn-secondary btn-sm" onclick="openViewerPage()">Buka</button>
+      </div>
+    </div>
 
     <div id="loadBanner" class="load-banner" style="display:none;">
       <span class="spinner show" style="border-top-color:#93c5fd"></span>
@@ -321,8 +352,8 @@
           <input type="text" id="donorName" placeholder="Nama lengkap donatur" />
         </div>
         <div class="field">
-          <label>ID Game</label>
-          <input type="text" id="mlId" placeholder="ID Game" />
+          <label>Mobile Legend ID</label>
+          <input type="text" id="mlId" placeholder="ID#Nickname" />
         </div>
       </div>
       <div class="form-row">
@@ -368,27 +399,25 @@
       </div>
     </div>
 
-    <!-- DAFTAR VIP/VVIP -->
+    <!-- DAFTAR -->
     <div class="divider"></div>
     <div class="section-header">
-      <h2>Daftar VIP / VVIP Game</h2>
+      <h2>Daftar Donatur</h2>
       <div class="total-count">Tampil: <span id="totalCount">0</span></div>
-      <div class="total-count" style="margin-left:auto;">
+      <div class="total-count">
         <span class="spinner" id="refreshSpinner" style="width:12px;height:12px;border-width:1.5px;border-top-color:var(--accent);"></span>
       </div>
-      <button class="btn btn-secondary btn-sm" onclick="loadFromSheet()" title="Muat ulang dari spreadsheet">↻ Refresh</button>
-      <button class="btn btn-secondary btn-sm" onclick="exportCSV()" id="exportBtn">⬇ CSV</button>
+      <button class="btn btn-secondary btn-sm" onclick="loadFromSheet()">↻ Refresh</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ CSV</button>
     </div>
 
-    <!-- FILTER -->
     <div class="filter-bar">
       <button class="filter-btn active-all" id="fb-all" onclick="setFilter('all')">Semua</button>
       <button class="filter-btn" id="fb-vip" onclick="setFilter('vip')">VIP</button>
       <button class="filter-btn" id="fb-vvip" onclick="setFilter('vvip')">VVIP</button>
       <div class="filter-search" style="display:flex; gap:8px;">
-        <input type="text" id="filterSearch" placeholder="Cari nama / ML ID..."
-               oninput="renderTable()" onkeydown="if(event.key==='Enter')renderTable()" />
-        <button class="btn btn-secondary btn-sm" onclick="renderTable()" style="white-space:nowrap;">🔍 Cari</button>
+        <input type="text" id="filterSearch" placeholder="Cari nama / ML ID..." oninput="renderTable()" />
+        <button class="btn btn-secondary btn-sm" onclick="renderTable()">🔍</button>
       </div>
       <select id="filterDate" onchange="renderTable()" style="max-width:160px; padding:8px 12px; font-size:0.85rem;">
         <option value="">Semua Tanggal</option>
@@ -407,11 +436,11 @@
               <th>Tier</th>
               <th>Game</th>
               <th>Waktu</th>
-              <th>Hapus</th>
+              <th>Aksi</th>
             </tr>
           </thead>
           <tbody id="donorTable">
-            <tr class="empty-row"><td colspan="8">Belum ada data. Mulai input atau refresh dari spreadsheet.</td></tr>
+            <tr class="empty-row"><td colspan="8">Belum ada data.</td></tr>
           </tbody>
         </table>
       </div>
@@ -421,43 +450,55 @@
       <button class="btn btn-secondary" onclick="clearSession()">🗑 Hapus Semua (Lokal)</button>
     </div>
   </div>
-
 </main>
+
+<!-- TIER CHANGE MODAL -->
+<div class="modal-overlay" id="tierModal">
+  <div class="modal">
+    <div class="modal-title">Ubah Tier Donatur</div>
+    <div class="modal-sub" id="tierModalSub">Pilih tier baru untuk donatur ini.</div>
+    <div style="display:flex; gap:12px; margin-top:8px;">
+      <button class="btn btn-primary" style="flex:1; background:rgba(59,130,246,0.2); color:var(--vip); border:1px solid rgba(59,130,246,0.4);" onclick="confirmTierChange('VIP')">VIP</button>
+      <button class="btn btn-primary" style="flex:1; background:rgba(168,85,247,0.2); color:var(--vvip); border:1px solid rgba(168,85,247,0.4);" onclick="confirmTierChange('VVIP')">VVIP</button>
+    </div>
+    <div class="btn-row" style="margin-top:16px;">
+      <button class="btn btn-secondary" style="width:100%;" onclick="closeTierModal()">Batal</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// CONFIG — hardcoded defaults
-// ═══════════════════════════════════════════════════════
-const DEFAULT_SCRIPT_URL = '';
-const DEFAULT_SHEET_NAME = 'Sheet1';
-
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 const state = {
   scriptUrl: '',
-  sheetName: DEFAULT_SHEET_NAME,
+  sheetName: 'Sheet1',
   isLocalMode: false,
-  pricing: { vip: 0, vvip: 0, vipMin: 0, vvipMin: 0 },
-  donors: [],          // all donors (merged from sheet + session)
+  pricing: { vip: 0, vvip: 0 },
+  donors: [],
   currentGames: 0,
   activeFilter: 'all',
+  shareToken: '',
+  isSharing: false,
 };
 
-// Load persisted settings
+// Persist & restore config
 try {
   const saved = JSON.parse(localStorage.getItem('dontrack_state') || '{}');
-  if (saved.scriptUrl) state.scriptUrl = saved.scriptUrl;
-  if (saved.sheetName) state.sheetName = saved.sheetName;
+  if (saved.scriptUrl)  state.scriptUrl  = saved.scriptUrl;
+  if (saved.sheetName)  state.sheetName  = saved.sheetName;
   if (saved.isLocalMode) state.isLocalMode = saved.isLocalMode;
   if (saved.pricing && saved.pricing.vip) state.pricing = saved.pricing;
+  if (saved.shareToken) state.shareToken = saved.shareToken;
+  if (saved.isSharing)  state.isSharing  = saved.isSharing;
 } catch(e){}
 
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 // NAVIGATION
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 function goToStep(n) {
   document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
   document.getElementById('step' + n).classList.add('active');
@@ -471,14 +512,13 @@ function goToStep(n) {
   }
 }
 
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 // STEP 1: CONNECT
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 async function connectSheet() {
   const url = document.getElementById('scriptUrlInput').value.trim();
-  const sheetName = document.getElementById('sheetNameInput').value.trim() || DEFAULT_SHEET_NAME;
+  const sheetName = document.getElementById('sheetNameInput').value.trim() || 'Sheet1';
   hideAlert('alert1');
-
   if (!url) { showAlert('alert1', 'Masukkan URL Apps Script Web App.'); return; }
 
   state.scriptUrl = url;
@@ -487,8 +527,6 @@ async function connectSheet() {
   saveState();
 
   showSpinner('spinner1', true);
-
-  // Verify connection with a ping
   const ok = await pingScript(url);
   showSpinner('spinner1', false);
 
@@ -496,7 +534,6 @@ async function connectSheet() {
     showAlert('alert1', 'Tidak bisa menjangkau Apps Script. Pastikan sudah di-deploy dan "Execute as: Me, Who has access: Anyone".');
     return;
   }
-
   onConnected('Apps Script');
 }
 
@@ -506,14 +543,12 @@ async function pingScript(url) {
     if (!res.ok) return false;
     const data = await res.json();
     return data.status === 'ok';
-  } catch(e) {
-    return false;
-  }
+  } catch(e) { return false; }
 }
 
 function useLocalMode() {
   state.isLocalMode = true;
-  state.sheetName = document.getElementById('sheetNameInput').value.trim() || DEFAULT_SHEET_NAME;
+  state.sheetName = document.getElementById('sheetNameInput').value.trim() || 'Sheet1';
   saveState();
   onConnected('Lokal (CSV Only)');
 }
@@ -523,71 +558,32 @@ async function onConnected(mode) {
   document.getElementById('statusPill').classList.add('connected');
   document.getElementById('statusText').textContent = 'Terhubung · ' + mode;
   showToast('Terhubung! Mode: ' + mode, 'success');
-
-  if (state.pricing.vip > 0 || state.pricing.vvip > 0) {
+  if (state.pricing.vip > 0) {
     goToStep(3);
     renderPriceSummary();
-    await loadFromSheet();
+    restoreShareUI();
+    if (!state.isLocalMode) await loadFromSheet();
+    else renderTable();
   } else {
     goToStep(2);
   }
 }
 
-// ═══════════════════════════════════════════════════════
-// LOAD DATA FROM SHEET
-// ═══════════════════════════════════════════════════════
-async function loadFromSheet() {
-  if (state.isLocalMode) { renderTable(); return; }
-
-  showLoadBanner('Memuat data dari spreadsheet...');
-  showSpinner('refreshSpinner', true);
-
-  try {
-    const url = state.scriptUrl + '?action=getAll&sheetName=' + encodeURIComponent(state.sheetName);
-    const res = await fetchWithTimeout(url, { method: 'GET' }, 12000);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-
-    if (data.success && Array.isArray(data.rows)) {
-      state.donors = data.rows.map(r => ({
-        rowIndex: r.rowIndex,
-        name: r.name || '',
-        mlId: r.mlId || '',
-        amount: parseInt(r.amount) || 0,
-        tier: r.tier || 'VIP',
-        games: parseInt(r.games) || 0,
-        timestamp: r.timestamp || '',
-      }));
-      buildDateFilter();
-      renderTable();
-      hideLoadBanner();
-      showToast(`${state.donors.length} data dimuat dari spreadsheet.`, 'success');
-    } else {
-      throw new Error(data.error || 'Respons tidak valid');
-    }
-  } catch(e) {
-    hideLoadBanner();
-    showToast('Gagal muat data: ' + e.message, 'error');
-  }
-  showSpinner('refreshSpinner', false);
-}
-
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 // STEP 2: PRICING
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 function savePricing() {
   const vip  = parseInt(document.getElementById('vipPrice').value);
   const vvip = parseInt(document.getElementById('vvipPrice').value);
-  const vipMin  = parseInt(document.getElementById('vipMin').value)  || 0;
-  const vvipMin = parseInt(document.getElementById('vvipMin').value) || 0;
   hideAlert('alert2');
   if (!vip  || vip  < 1) { showAlert('alert2', 'Masukkan harga per game VIP yang valid.');  return; }
   if (!vvip || vvip < 1) { showAlert('alert2', 'Masukkan harga per game VVIP yang valid.'); return; }
-  state.pricing = { vip, vvip, vipMin, vvipMin };
+  state.pricing = { vip, vvip };
   saveState();
   showToast('Harga berhasil disimpan!', 'success');
   goToStep(3);
   renderPriceSummary();
+  restoreShareUI();
 }
 
 function renderPriceSummary() {
@@ -604,19 +600,55 @@ function renderPriceSummary() {
       <div class="s-val" style="color:var(--vvip)">Rp ${formatRp(vvip)}</div>
     </div>
     <div class="summary-item">
-      <div class="s-label">Total Donatur VIP</div>
+      <div class="s-label">Donatur VIP</div>
       <div class="s-val" style="color:var(--vip)">${vipCount}</div>
     </div>
     <div class="summary-item">
-      <div class="s-label">Total Donatur VVIP</div>
+      <div class="s-label">Donatur VVIP</div>
       <div class="s-val" style="color:var(--vvip)">${vvipCount}</div>
-    </div>
-  `;
+    </div>`;
 }
 
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
+// LOAD FROM SHEET
+// ════════════════════════════════════════════
+async function loadFromSheet() {
+  if (state.isLocalMode) { renderTable(); return; }
+  showLoadBanner('Memuat data dari spreadsheet...');
+  showSpinner('refreshSpinner', true);
+  try {
+    const url = state.scriptUrl + '?action=getAll&sheetName=' + encodeURIComponent(state.sheetName);
+    const res = await fetchWithTimeout(url, { method: 'GET' }, 12000);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.success && Array.isArray(data.rows)) {
+      state.donors = data.rows.map(r => ({
+        rowIndex: r.rowIndex,
+        name: r.name || '',
+        mlId: r.mlId || '',
+        amount: parseInt(r.amount) || 0,
+        tier: r.tier || 'VIP',
+        games: parseInt(r.games) || 0,
+        timestamp: r.timestamp || '',
+      }));
+      buildDateFilter();
+      renderTable();
+      renderPriceSummary();
+      hideLoadBanner();
+      showToast(`${state.donors.length} data dimuat.`, 'success');
+    } else {
+      throw new Error(data.error || 'Respons tidak valid');
+    }
+  } catch(e) {
+    hideLoadBanner();
+    showToast('Gagal muat data: ' + e.message, 'error');
+  }
+  showSpinner('refreshSpinner', false);
+}
+
+// ════════════════════════════════════════════
 // STEP 3: INPUT
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 function calcGames() {
   const amount = parseInt(document.getElementById('donAmount').value) || 0;
   const tier   = document.getElementById('donTier').value;
@@ -640,10 +672,9 @@ async function submitDonation() {
   const tier   = document.getElementById('donTier').value;
   const games  = parseInt(document.getElementById('gameCount').textContent) || 0;
   hideAlert('alert3');
-
-  if (!name)      { showAlert('alert3', 'Nama donatur tidak boleh kosong.');        return; }
-  if (!mlId)      { showAlert('alert3', 'Mobile Legend ID tidak boleh kosong.');    return; }
-  if (amount < 1) { showAlert('alert3', 'Jumlah donasi harus lebih dari 0.');       return; }
+  if (!name)      { showAlert('alert3', 'Nama donatur tidak boleh kosong.'); return; }
+  if (!mlId)      { showAlert('alert3', 'Mobile Legend ID tidak boleh kosong.'); return; }
+  if (amount < 1) { showAlert('alert3', 'Jumlah donasi harus lebih dari 0.'); return; }
 
   const timestamp = new Date().toLocaleString('id-ID');
   const entry = { name, mlId, amount, tier, games, timestamp };
@@ -656,35 +687,30 @@ async function submitDonation() {
     try {
       const res = await fetchWithTimeout(state.scriptUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' }, // avoid CORS preflight
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'append', sheetName: state.sheetName, ...entry }),
       }, 12000);
-
       let data;
-      try { data = await res.json(); } catch(e) { data = { success: true }; } // no-cors fallback
-
-      if (data.success === false) throw new Error(data.error || 'Server menolak permintaan');
-
+      try { data = await res.json(); } catch(e) { data = { success: true }; }
+      if (data.success === false) throw new Error(data.error || 'Server error');
       entry.rowIndex = data.rowIndex || null;
       state.donors.unshift(entry);
       buildDateFilter();
       renderTable();
       renderPriceSummary();
-      showToast(`${name} ditambahkan! (${games} game, data tersimpan ke spreadsheet)`, 'success');
+      showToast(`${name} ditambahkan! (${games} game)`, 'success');
       resetForm();
     } catch(e) {
-      showAlert('alert3', 'Gagal menyimpan ke spreadsheet: ' + e.message + '. Cek koneksi atau deploy ulang Apps Script.');
+      showAlert('alert3', 'Gagal menyimpan: ' + e.message);
     }
   } else {
-    // Local mode
     state.donors.unshift(entry);
     buildDateFilter();
     renderTable();
     renderPriceSummary();
-    showToast(`${name} ditambahkan! (${games} game — mode lokal)`, 'success');
+    showToast(`${name} ditambahkan! (${games} game — lokal)`, 'success');
     resetForm();
   }
-
   showSpinner('spinner3', false);
   btn.disabled = false;
 }
@@ -700,132 +726,302 @@ function resetForm() {
   hideAlert('alert3');
 }
 
-// ═══════════════════════════════════════════════════════
-// UPDATE GAMES (inline stepper per row)
-// ═══════════════════════════════════════════════════════
-const pendingUpdates = {}; // rowIndex → timer
+// ════════════════════════════════════════════
+// INLINE GAME STEPPER
+// ════════════════════════════════════════════
+const pendingUpdates = {};
 
 async function updateGames(idx, delta) {
   const donor = state.donors[idx];
   if (!donor) return;
-
-  const newGames = Math.max(0, (donor.games || 0) + delta);
-  donor.games = newGames;
+  donor.games = Math.max(0, (donor.games || 0) + delta);
   renderTable();
-
-  if (state.isLocalMode || !state.scriptUrl) return;
-  if (!donor.rowIndex) {
-    showToast('Baris tidak diketahui — tidak bisa update spreadsheet.', 'error');
-    return;
-  }
-
-  // Debounce: wait 800ms before sending
+  if (state.isLocalMode || !state.scriptUrl || !donor.rowIndex) return;
   clearTimeout(pendingUpdates[donor.rowIndex]);
   pendingUpdates[donor.rowIndex] = setTimeout(async () => {
     try {
       const res = await fetchWithTimeout(state.scriptUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'updateGames', sheetName: state.sheetName, rowIndex: donor.rowIndex, games: donor.games }),
+      }, 10000);
+      let data;
+      try { data = await res.json(); } catch(e) { data = { success: true }; }
+      if (data.success === false) throw new Error(data.error);
+      showToast(`Game ${donor.name}: ${donor.games}`, 'success');
+    } catch(e) { showToast('Gagal update: ' + e.message, 'error'); }
+  }, 800);
+}
+
+// ════════════════════════════════════════════
+// TIER CHANGE
+// ════════════════════════════════════════════
+let tierModalIdx = -1;
+
+function openTierModal(idx) {
+  tierModalIdx = idx;
+  const donor = state.donors[idx];
+  if (!donor) return;
+  document.getElementById('tierModalSub').textContent =
+    `Donatur: ${donor.name} — Tier saat ini: ${donor.tier}`;
+  document.getElementById('tierModal').classList.add('show');
+}
+
+function closeTierModal() {
+  document.getElementById('tierModal').classList.remove('show');
+  tierModalIdx = -1;
+}
+
+async function confirmTierChange(newTier) {
+  const donor = state.donors[tierModalIdx];
+  if (!donor) { closeTierModal(); return; }
+
+  const oldTier = donor.tier;
+  donor.tier = newTier;
+
+  // Recalculate games based on same donation amount with new price
+  const price = newTier === 'VIP' ? state.pricing.vip : state.pricing.vvip;
+  if (price > 0 && donor.amount > 0) {
+    donor.games = Math.floor(donor.amount / price);
+  }
+
+  closeTierModal();
+  renderTable();
+  renderPriceSummary();
+
+  if (!state.isLocalMode && state.scriptUrl && donor.rowIndex) {
+    try {
+      const res = await fetchWithTimeout(state.scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({
-          action: 'updateGames',
-          sheetName: state.sheetName,
-          rowIndex: donor.rowIndex,
-          games: donor.games,
+          action: 'updateTier', sheetName: state.sheetName,
+          rowIndex: donor.rowIndex, tier: newTier, games: donor.games
         }),
       }, 10000);
       let data;
       try { data = await res.json(); } catch(e) { data = { success: true }; }
       if (data.success === false) throw new Error(data.error);
-      showToast(`Game ${donor.name} diupdate: ${donor.games} game`, 'success');
+      showToast(`${donor.name}: tier diubah ke ${newTier} (${donor.games} game)`, 'success');
     } catch(e) {
-      showToast('Gagal update spreadsheet: ' + e.message, 'error');
+      showToast('Tier diubah lokal, gagal sync spreadsheet: ' + e.message, 'error');
     }
-  }, 800);
+  } else {
+    showToast(`${donor.name}: tier ${oldTier} → ${newTier} (${donor.games} game)`, 'success');
+  }
 }
 
-// ═══════════════════════════════════════════════════════
-// FILTER
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
+// DELETE
+// ════════════════════════════════════════════
+async function deleteDonor(idx) {
+  const donor = state.donors[idx];
+  if (!donor) return;
+  if (!confirm(`Hapus "${donor.name}" dari daftar?`)) return;
+  if (!state.isLocalMode && state.scriptUrl && donor.rowIndex) {
+    try {
+      await fetchWithTimeout(state.scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'deleteRow', sheetName: state.sheetName, rowIndex: donor.rowIndex }),
+      }, 10000);
+    } catch(e) { showToast('Gagal hapus dari spreadsheet.', 'error'); }
+  }
+  state.donors.splice(idx, 1);
+  buildDateFilter();
+  renderTable();
+  renderPriceSummary();
+  showToast(`${donor.name} dihapus.`, 'success');
+}
+
+// ════════════════════════════════════════════
+// SHARE FUNCTIONALITY
+// ════════════════════════════════════════════
+function generateToken() {
+  // Simple random token — 16 hex chars
+  return Array.from(crypto.getRandomValues(new Uint8Array(8)))
+    .map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function getViewerUrl(token) {
+  // viewer.html is in the same directory as index.html
+  const base = window.location.href.replace(/\/[^\/]*$/, '/');
+  return base + 'viewer.html?t=' + token + '&s=' + encodeURIComponent(btoa(state.scriptUrl)) + '&n=' + encodeURIComponent(state.sheetName);
+}
+
+async function startSharing() {
+  if (state.isLocalMode) {
+    showToast('Tidak bisa berbagi di mode lokal. Hubungkan ke Apps Script terlebih dahulu.', 'error');
+    return;
+  }
+  if (!state.scriptUrl) {
+    showToast('Hubungkan ke Apps Script terlebih dahulu.', 'error');
+    return;
+  }
+
+  showSpinner('shareSpinner', true);
+  document.getElementById('shareStartBtn').disabled = true;
+
+  // Generate token & write to sheet
+  const token = generateToken();
+  try {
+    const res = await fetchWithTimeout(state.scriptUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'setShareToken', token }),
+    }, 10000);
+    let data;
+    try { data = await res.json(); } catch(e) { data = { success: true }; }
+    if (data.success === false) throw new Error(data.error);
+
+    state.shareToken = token;
+    state.isSharing = true;
+    saveState();
+    setShareUI(true);
+    showToast('Daftar sedang dibagikan ke penonton!', 'success');
+  } catch(e) {
+    showToast('Gagal mulai berbagi: ' + e.message, 'error');
+  }
+
+  showSpinner('shareSpinner', false);
+  document.getElementById('shareStartBtn').disabled = false;
+}
+
+async function stopSharing() {
+  if (!confirm('Hentikan berbagi? Penonton tidak akan bisa lagi mengakses daftar ini.')) return;
+  showSpinner('shareSpinner', true);
+
+  try {
+    if (!state.isLocalMode && state.scriptUrl) {
+      await fetchWithTimeout(state.scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'setShareToken', token: '' }),
+      }, 10000);
+    }
+  } catch(e) { /* silent */ }
+
+  state.shareToken = '';
+  state.isSharing = false;
+  saveState();
+  setShareUI(false);
+  showSpinner('shareSpinner', false);
+  showToast('Berbagi dihentikan. Penonton tidak bisa lagi mengakses daftar.', 'info');
+}
+
+function setShareUI(sharing) {
+  const panel = document.getElementById('sharePanel');
+  const startBtn = document.getElementById('shareStartBtn');
+  const stopBtn  = document.getElementById('shareStopBtn');
+  const urlRow   = document.getElementById('shareUrlRow');
+  const title    = document.getElementById('sharePanelTitle');
+  const desc     = document.getElementById('sharePanelDesc');
+
+  if (sharing) {
+    panel.classList.add('sharing');
+    startBtn.style.display = 'none';
+    stopBtn.style.display  = 'inline-flex';
+    urlRow.style.display   = 'flex';
+    title.textContent = '🟢 Sedang Dibagikan ke Penonton';
+    desc.textContent  = 'Penonton dapat melihat daftar game mereka melalui link berikut:';
+    document.getElementById('shareUrlBox').textContent = getViewerUrl(state.shareToken);
+  } else {
+    panel.classList.remove('sharing');
+    startBtn.style.display = 'inline-flex';
+    stopBtn.style.display  = 'none';
+    urlRow.style.display   = 'none';
+    title.textContent = '📡 Bagikan Daftar ke Penonton';
+    desc.textContent  = 'Aktifkan agar penonton bisa melihat daftar game mereka secara live.';
+  }
+}
+
+function restoreShareUI() {
+  if (state.isSharing && state.shareToken) {
+    setShareUI(true);
+  } else {
+    setShareUI(false);
+  }
+}
+
+function copyShareUrl() {
+  const url = getViewerUrl(state.shareToken);
+  navigator.clipboard.writeText(url).then(() => showToast('Link berhasil dicopy!', 'success'));
+}
+
+function openViewerPage() {
+  window.open(getViewerUrl(state.shareToken), '_blank');
+}
+
+// ════════════════════════════════════════════
+// FILTER & TABLE
+// ════════════════════════════════════════════
 function setFilter(f) {
   state.activeFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.className = 'filter-btn';
+  ['all','vip','vvip'].forEach(id => {
+    document.getElementById('fb-' + id).className = 'filter-btn' + (id === f ? ' active-' + id : '');
   });
-  document.getElementById('fb-' + f).className = 'filter-btn active-' + f;
   renderTable();
 }
 
 function buildDateFilter() {
   const sel = document.getElementById('filterDate');
   const current = sel.value;
-  // Extract unique dates
   const dates = [...new Set(state.donors.map(d => {
-    if (!d.timestamp) return null;
-    // timestamp format: "DD/MM/YYYY, HH.MM.SS" (id-ID locale)
-    const parts = d.timestamp.split(',')[0].trim();
-    return parts;
+    return d.timestamp ? d.timestamp.split(',')[0].trim() : null;
   }).filter(Boolean))].sort().reverse();
-
   sel.innerHTML = '<option value="">Semua Tanggal</option>' +
     dates.map(d => `<option value="${esc(d)}" ${d === current ? 'selected' : ''}>${d}</option>`).join('');
 }
 
 function getFilteredDonors() {
   const f  = state.activeFilter;
-  const searchEl = document.getElementById('filterSearch');
-  const dateEl   = document.getElementById('filterDate');
-  const q  = searchEl ? searchEl.value.toLowerCase().trim() : '';
-  const fd = dateEl   ? dateEl.value : '';
-
+  const q  = (document.getElementById('filterSearch')?.value || '').toLowerCase().trim();
+  const fd = document.getElementById('filterDate')?.value || '';
   return state.donors.filter(d => {
     if (f === 'vip'  && d.tier !== 'VIP')  return false;
     if (f === 'vvip' && d.tier !== 'VVIP') return false;
     if (q && !d.name.toLowerCase().includes(q) && !d.mlId.toLowerCase().includes(q)) return false;
-    if (fd) {
-      const dDate = (d.timestamp || '').split(',')[0].trim();
-      if (dDate !== fd) return false;
-    }
+    if (fd && (d.timestamp || '').split(',')[0].trim() !== fd) return false;
     return true;
   });
 }
 
-// ═══════════════════════════════════════════════════════
-// RENDER TABLE
-// ═══════════════════════════════════════════════════════
 function renderTable() {
   const tbody = document.getElementById('donorTable');
   const filtered = getFilteredDonors();
   document.getElementById('totalCount').textContent = filtered.length;
-  renderPriceSummary();
 
   if (filtered.length === 0) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Tidak ada data yang cocok.</td></tr>';
     return;
   }
 
-  // Group by date
   const groups = {};
-  filtered.forEach((d, localIdx) => {
+  filtered.forEach(d => {
     const date = d.timestamp ? d.timestamp.split(',')[0].trim() : 'Tidak Diketahui';
     if (!groups[date]) groups[date] = [];
-    groups[date].push({ d, globalIdx: state.donors.indexOf(d) });
+    groups[date].push(d);
   });
 
   let html = '';
   let rowNum = 1;
-
   Object.entries(groups).forEach(([date, items]) => {
     html += `<tr class="date-group-row"><td colspan="8">📅 ${esc(date)}</td></tr>`;
-    items.forEach(({ d, globalIdx }) => {
+    items.forEach(d => {
+      const globalIdx = state.donors.indexOf(d);
       const tierClass = d.tier.toLowerCase();
-      const time = d.timestamp ? d.timestamp.split(',')[1]?.trim() || '' : '';
+      const time = d.timestamp ? (d.timestamp.split(',')[1]?.trim() || '') : '';
       html += `
         <tr class="donor-row">
           <td style="color:var(--muted); font-size:0.8rem">${rowNum++}</td>
           <td style="font-weight:500">${esc(d.name)}</td>
           <td style="font-family:monospace; font-size:0.82rem; color:var(--muted)">${esc(d.mlId)}</td>
           <td style="color:var(--accent)">Rp ${formatRp(d.amount)}</td>
-          <td><span class="badge badge-${tierClass}">${d.tier}</span></td>
+          <td>
+            <span class="badge badge-${tierClass} clickable" onclick="openTierModal(${globalIdx})" title="Klik untuk ubah tier">
+              ${d.tier} ✎
+            </span>
+          </td>
           <td>
             <div class="game-stepper">
               <button onclick="updateGames(${globalIdx}, -1)">−</button>
@@ -835,46 +1031,17 @@ function renderTable() {
           </td>
           <td style="color:var(--muted); font-size:0.78rem">${esc(time)}</td>
           <td>
-            <button class="btn btn-secondary btn-sm" onclick="deleteDonor(${globalIdx})" title="Hapus baris ini" style="padding:4px 10px; color:var(--accent2); border-color:rgba(232,57,94,0.3);">✕</button>
+            <button class="btn btn-secondary btn-sm" onclick="deleteDonor(${globalIdx})" title="Hapus" style="padding:4px 10px; color:var(--accent2); border-color:rgba(232,57,94,0.3);">✕</button>
           </td>
         </tr>`;
     });
   });
-
   tbody.innerHTML = html;
 }
 
-// ═══════════════════════════════════════════════════════
-// DELETE ROW
-// ═══════════════════════════════════════════════════════
-async function deleteDonor(idx) {
-  const donor = state.donors[idx];
-  if (!donor) return;
-  if (!confirm(`Hapus "${donor.name}" dari daftar?`)) return;
-
-  // Remove from sheet if connected
-  if (!state.isLocalMode && state.scriptUrl && donor.rowIndex) {
-    try {
-      await fetchWithTimeout(state.scriptUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'deleteRow', sheetName: state.sheetName, rowIndex: donor.rowIndex }),
-      }, 10000);
-    } catch(e) {
-      showToast('Gagal hapus dari spreadsheet, tapi dihapus secara lokal.', 'error');
-    }
-  }
-
-  state.donors.splice(idx, 1);
-  // Re-number rowIndex from sheet — no action needed, indices stable
-  buildDateFilter();
-  renderTable();
-  showToast(`${donor.name} dihapus.`, 'success');
-}
-
-// ═══════════════════════════════════════════════════════
-// EXPORT CSV
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
+// EXPORT & CLEAR
+// ════════════════════════════════════════════
 function exportCSV() {
   const filtered = getFilteredDonors();
   if (filtered.length === 0) { showToast('Tidak ada data untuk diexport.', 'error'); return; }
@@ -894,15 +1061,15 @@ function clearSession() {
   state.donors = [];
   buildDateFilter();
   renderTable();
+  renderPriceSummary();
   showToast('Data lokal dihapus.', 'success');
 }
 
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 // UTILS
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 function formatRp(n) { return Number(n).toLocaleString('id-ID'); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
 function showAlert(id, msg, type='error') {
   const el = document.getElementById(id);
   el.className = 'alert alert-' + type + ' show';
@@ -915,12 +1082,10 @@ function showSpinner(id, show) {
   if (el) el.classList.toggle('show', show);
 }
 function showLoadBanner(msg) {
-  const b = document.getElementById('loadBanner');
   document.getElementById('loadBannerText').textContent = msg;
-  b.style.display = 'flex';
+  document.getElementById('loadBanner').style.display = 'flex';
 }
 function hideLoadBanner() { document.getElementById('loadBanner').style.display = 'none'; }
-
 let toastTimer;
 function showToast(msg, type='success') {
   const t = document.getElementById('toast');
@@ -929,37 +1094,30 @@ function showToast(msg, type='success') {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 4000);
 }
-
 function saveState() {
   try {
     localStorage.setItem('dontrack_state', JSON.stringify({
-      scriptUrl: state.scriptUrl,
-      sheetName: state.sheetName,
-      isLocalMode: state.isLocalMode,
-      pricing: state.pricing,
+      scriptUrl: state.scriptUrl, sheetName: state.sheetName,
+      isLocalMode: state.isLocalMode, pricing: state.pricing,
+      shareToken: state.shareToken, isSharing: state.isSharing,
     }));
   } catch(e){}
 }
-
 function fetchWithTimeout(url, options, ms) {
   const ctrl = new AbortController();
   const id = setTimeout(() => ctrl.abort(), ms);
   return fetch(url, { ...options, signal: ctrl.signal }).finally(() => clearTimeout(id));
 }
 
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════
 window.onload = async function() {
-  // Pre-fill inputs
   document.getElementById('scriptUrlInput').value = state.scriptUrl;
   document.getElementById('sheetNameInput').value = state.sheetName;
-  if (state.pricing.vip)    document.getElementById('vipPrice').value  = state.pricing.vip;
-  if (state.pricing.vvip)   document.getElementById('vvipPrice').value = state.pricing.vvip;
-  if (state.pricing.vipMin) document.getElementById('vipMin').value    = state.pricing.vipMin;
-  if (state.pricing.vvipMin)document.getElementById('vvipMin').value   = state.pricing.vvipMin;
+  if (state.pricing.vip)  document.getElementById('vipPrice').value  = state.pricing.vip;
+  if (state.pricing.vvip) document.getElementById('vvipPrice').value = state.pricing.vvip;
 
-  // If already configured → jump to step 3
   if (state.scriptUrl && state.pricing.vip > 0) {
     const mode = state.isLocalMode ? 'Lokal' : 'Apps Script';
     document.getElementById('statusDot').classList.add('connected');
@@ -967,11 +1125,16 @@ window.onload = async function() {
     document.getElementById('statusText').textContent = 'Terhubung · ' + mode;
     goToStep(3);
     renderPriceSummary();
+    restoreShareUI();
     if (!state.isLocalMode) await loadFromSheet();
     else renderTable();
   }
+
+  // Close modal on overlay click
+  document.getElementById('tierModal').addEventListener('click', function(e) {
+    if (e.target === this) closeTierModal();
+  });
 };
 </script>
-
 </body>
 </html>
