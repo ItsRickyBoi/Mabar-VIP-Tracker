@@ -95,7 +95,6 @@
   .stepper-btn:hover { border-color: var(--accent); color: var(--accent); }
   .stepper-val { min-width: 48px; text-align: center; font-family: 'Rajdhani', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--accent); }
 
-  /* SHARE PANEL */
   .share-panel {
     background: linear-gradient(135deg, rgba(245,166,35,0.08) 0%, rgba(168,85,247,0.06) 100%);
     border: 1px solid rgba(245,166,35,0.3);
@@ -114,7 +113,6 @@
   }
   .share-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); display: inline-block; animation: pulse 1.5s infinite; flex-shrink: 0; }
 
-  /* FILTER BAR */
   .filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
   .filter-btn { padding: 7px 18px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 0.85rem; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
   .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -124,7 +122,6 @@
   .filter-search { flex: 1; min-width: 160px; }
   .filter-search input { padding: 8px 14px; font-size: 0.88rem; }
 
-  /* TABLE */
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; }
   th { font-family: 'Rajdhani', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
@@ -182,7 +179,6 @@
   .load-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 8px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px; }
   .date-group-row td { background: rgba(245,166,35,0.05); color: var(--accent); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 14px; border-bottom: 1px solid var(--border); }
 
-  /* MODAL */
   .modal-overlay { position: fixed; inset: 0; background: rgba(7,8,15,0.85); backdrop-filter: blur(4px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.show { display: flex; }
   .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 460px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.5); animation: modalIn 0.2s ease; }
@@ -230,20 +226,17 @@
     </div>
   </div>
 
-  <!-- ══ STEP 1 ══ -->
+  <!-- STEP 1 -->
   <div class="step active" id="step1">
     <div class="step-title">Hubungkan Google Spreadsheet</div>
     <div class="step-sub">Masukkan URL Google Apps Script Web App untuk menghubungkan spreadsheet.</div>
-
     <div class="help-box">
-      <strong>Cara Setup:</strong> Di Google Spreadsheet → Extensions → Apps Script → paste kode dari README → Deploy sebagai Web App (Execute as: Me, Who has access: Anyone) → copy URL deployment-nya ke sini.
+      <strong>Cara Setup:</strong> Di Google Spreadsheet &rarr; Extensions &rarr; Apps Script &rarr; paste kode dari README &rarr; Deploy sebagai Web App (Execute as: Me, Who has access: Anyone) &rarr; copy URL deployment-nya ke sini.
     </div>
-
     <div id="alert1" class="alert alert-error">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <span id="alert1Text"></span>
     </div>
-
     <div class="card">
       <div class="card-title">Koneksi Apps Script</div>
       <div class="field">
@@ -257,23 +250,21 @@
       <div class="btn-row">
         <button class="btn btn-primary" onclick="connectSheet()">
           <span class="spinner" id="spinner1"></span>
-          Hubungkan & Muat Data
+          Hubungkan &amp; Muat Data
         </button>
         <button class="btn btn-secondary" onclick="useLocalMode()">Mode Lokal</button>
       </div>
     </div>
   </div>
 
-  <!-- ══ STEP 2 ══ -->
+  <!-- STEP 2 -->
   <div class="step" id="step2">
     <div class="step-title">Setup Harga per Game</div>
     <div class="step-sub">Atur harga per game untuk tier VIP dan VVIP.</div>
-
     <div id="alert2" class="alert alert-error">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       <span id="alert2Text"></span>
     </div>
-
     <div class="card">
       <div class="card-title">Harga VIP</div>
       <div class="field">
@@ -284,7 +275,6 @@
         </div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">Harga VVIP</div>
       <div class="field">
@@ -295,21 +285,20 @@
         </div>
       </div>
     </div>
-
     <div class="btn-row">
-      <button class="btn btn-primary" onclick="savePricing()">Simpan & Lanjut</button>
+      <button class="btn btn-primary" onclick="savePricing()">Simpan &amp; Lanjut</button>
       <button class="btn btn-secondary" onclick="goToStep(1)">Kembali</button>
     </div>
   </div>
 
-  <!-- ══ STEP 3 ══ -->
+  <!-- STEP 3 -->
   <div class="step" id="step3">
     <div class="step-title">Input Donasi</div>
     <div class="step-sub">Masukkan data donatur baru setiap kali ada yang bergabung.</div>
 
     <div class="summary-grid" id="priceSummary"></div>
 
-    <!-- ══ SHARE PANEL ══ -->
+    <!-- SHARE PANEL -->
     <div class="share-panel" id="sharePanel">
       <div class="share-panel-header">
         <div>
@@ -322,7 +311,7 @@
             Mulai Bagikan
           </button>
           <button class="btn btn-danger btn-sm" id="shareStopBtn" onclick="stopSharing()" style="display:none;">
-            ⬛ Stop Berbagi
+            &#9635; Stop Berbagi
           </button>
         </div>
       </div>
@@ -382,7 +371,7 @@
         <div>
           <div class="calc-label">Total Game (edit jika ada bonus)</div>
           <div class="stepper">
-            <button class="stepper-btn" onclick="adjustGames(-1)">−</button>
+            <button class="stepper-btn" onclick="adjustGames(-1)">&minus;</button>
             <div class="stepper-val" id="gameCount">0</div>
             <button class="stepper-btn" onclick="adjustGames(1)">+</button>
           </div>
@@ -395,7 +384,7 @@
           Tambah Donatur
         </button>
         <button class="btn btn-secondary" onclick="resetForm()">Reset</button>
-        <button class="btn btn-secondary" onclick="goToStep(2)" style="margin-left:auto;">⚙ Ubah Harga</button>
+        <button class="btn btn-secondary" onclick="goToStep(2)" style="margin-left:auto;">&#9881; Ubah Harga</button>
       </div>
     </div>
 
@@ -407,8 +396,8 @@
       <div class="total-count">
         <span class="spinner" id="refreshSpinner" style="width:12px;height:12px;border-width:1.5px;border-top-color:var(--accent);"></span>
       </div>
-      <button class="btn btn-secondary btn-sm" onclick="loadFromSheet()">↻ Refresh</button>
-      <button class="btn btn-secondary btn-sm" onclick="exportCSV()">⬇ CSV</button>
+      <button class="btn btn-secondary btn-sm" onclick="loadFromSheet()">&#8635; Refresh</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportCSV()">&#8595; CSV</button>
     </div>
 
     <div class="filter-bar">
@@ -416,8 +405,8 @@
       <button class="filter-btn" id="fb-vip" onclick="setFilter('vip')">VIP</button>
       <button class="filter-btn" id="fb-vvip" onclick="setFilter('vvip')">VVIP</button>
       <div class="filter-search" style="display:flex; gap:8px;">
-        <input type="text" id="filterSearch" placeholder="Cari nama / ML ID..." oninput="renderTable()" />
-        <button class="btn btn-secondary btn-sm" onclick="renderTable()">🔍</button>
+        <input type="text" id="filterSearch" placeholder="Cari nama / ID..." oninput="renderTable()" />
+        <button class="btn btn-secondary btn-sm" onclick="renderTable()">&#128269;</button>
       </div>
       <select id="filterDate" onchange="renderTable()" style="max-width:160px; padding:8px 12px; font-size:0.85rem;">
         <option value="">Semua Tanggal</option>
@@ -431,7 +420,7 @@
             <tr>
               <th>#</th>
               <th>Nama</th>
-              <th>ML ID</th>
+              <th>ID Game</th>
               <th>Donasi</th>
               <th>Tier</th>
               <th>Game</th>
@@ -447,7 +436,7 @@
     </div>
 
     <div class="btn-row" style="margin-top:12px;">
-      <button class="btn btn-secondary" onclick="clearSession()">🗑 Hapus Semua (Lokal)</button>
+      <button class="btn btn-secondary" onclick="clearSession()">&#128465; Hapus Semua (Lokal)</button>
     </div>
   </div>
 </main>
@@ -473,6 +462,9 @@
 // ════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════
+
+const INTERNAL_SECRET = '9de1076366b3a5fec92691aa1cc98095f851d58e19c34e40bb2523eeed25884a';
+
 const state = {
   scriptUrl: '',
   sheetName: 'Sheet1',
@@ -485,15 +477,14 @@ const state = {
   isSharing: false,
 };
 
-// Persist & restore config
 try {
   const saved = JSON.parse(localStorage.getItem('dontrack_state') || '{}');
-  if (saved.scriptUrl)  state.scriptUrl  = saved.scriptUrl;
-  if (saved.sheetName)  state.sheetName  = saved.sheetName;
+  if (saved.scriptUrl)   state.scriptUrl   = saved.scriptUrl;
+  if (saved.sheetName)   state.sheetName   = saved.sheetName;
   if (saved.isLocalMode) state.isLocalMode = saved.isLocalMode;
   if (saved.pricing && saved.pricing.vip) state.pricing = saved.pricing;
-  if (saved.shareToken) state.shareToken = saved.shareToken;
-  if (saved.isSharing)  state.isSharing  = saved.isSharing;
+  if (saved.shareToken)  state.shareToken  = saved.shareToken;
+  if (saved.isSharing)   state.isSharing   = saved.isSharing;
 } catch(e){}
 
 // ════════════════════════════════════════════
@@ -520,16 +511,13 @@ async function connectSheet() {
   const sheetName = document.getElementById('sheetNameInput').value.trim() || 'Sheet1';
   hideAlert('alert1');
   if (!url) { showAlert('alert1', 'Masukkan URL Apps Script Web App.'); return; }
-
   state.scriptUrl = url;
   state.sheetName = sheetName;
   state.isLocalMode = false;
   saveState();
-
   showSpinner('spinner1', true);
   const ok = await pingScript(url);
   showSpinner('spinner1', false);
-
   if (!ok) {
     showAlert('alert1', 'Tidak bisa menjangkau Apps Script. Pastikan sudah di-deploy dan "Execute as: Me, Who has access: Anyone".');
     return;
@@ -588,8 +576,9 @@ function savePricing() {
 
 function renderPriceSummary() {
   const { vip, vvip } = state.pricing;
-  const vipCount  = state.donors.filter(d => d.tier === 'VIP').length;
-  const vvipCount = state.donors.filter(d => d.tier === 'VVIP').length;
+  // PATCH 3: type-safe tier count
+  const vipCount  = state.donors.filter(d => String(d.tier||'').trim().toUpperCase() === 'VIP').length;
+  const vvipCount = state.donors.filter(d => String(d.tier||'').trim().toUpperCase() === 'VVIP').length;
   document.getElementById('priceSummary').innerHTML = `
     <div class="summary-item">
       <div class="s-label">Harga / Game VIP</div>
@@ -617,19 +606,22 @@ async function loadFromSheet() {
   showLoadBanner('Memuat data dari spreadsheet...');
   showSpinner('refreshSpinner', true);
   try {
-    const url = state.scriptUrl + '?action=getAll&sheetName=' + encodeURIComponent(state.sheetName);
+    const url = state.scriptUrl
+      + '?action=getAll'
+      + '&secret=' + encodeURIComponent(INTERNAL_SECRET)
+      + '&sheetName=' + encodeURIComponent(state.sheetName);
     const res = await fetchWithTimeout(url, { method: 'GET' }, 12000);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data.success && Array.isArray(data.rows)) {
       state.donors = data.rows.map(r => ({
-        rowIndex: r.rowIndex,
-        name: r.name || '',
-        mlId: r.mlId || '',
-        amount: parseInt(r.amount) || 0,
-        tier: r.tier || 'VIP',
-        games: parseInt(r.games) || 0,
-        timestamp: r.timestamp || '',
+        rowIndex:  r.rowIndex,
+        name:      String(r.name      ?? '').trim(),
+        mlId:      String(r.mlId      ?? '').trim(),
+        amount:    parseInt(r.amount)  || 0,
+        tier:      String(r.tier      ?? 'VIP').trim().toUpperCase(),
+        games:     parseInt(r.games)   || 0,
+        timestamp: String(r.timestamp ?? '').trim(),
       }));
       buildDateFilter();
       renderTable();
@@ -775,29 +767,21 @@ function closeTierModal() {
 async function confirmTierChange(newTier) {
   const donor = state.donors[tierModalIdx];
   if (!donor) { closeTierModal(); return; }
-
   const oldTier = donor.tier;
   donor.tier = newTier;
-
-  // Recalculate games based on same donation amount with new price
   const price = newTier === 'VIP' ? state.pricing.vip : state.pricing.vvip;
   if (price > 0 && donor.amount > 0) {
     donor.games = Math.floor(donor.amount / price);
   }
-
   closeTierModal();
   renderTable();
   renderPriceSummary();
-
   if (!state.isLocalMode && state.scriptUrl && donor.rowIndex) {
     try {
       const res = await fetchWithTimeout(state.scriptUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({
-          action: 'updateTier', sheetName: state.sheetName,
-          rowIndex: donor.rowIndex, tier: newTier, games: donor.games
-        }),
+        body: JSON.stringify({ action: 'updateTier', sheetName: state.sheetName, rowIndex: donor.rowIndex, tier: newTier, games: donor.games }),
       }, 10000);
       let data;
       try { data = await res.json(); } catch(e) { data = { success: true }; }
@@ -838,13 +822,11 @@ async function deleteDonor(idx) {
 // SHARE FUNCTIONALITY
 // ════════════════════════════════════════════
 function generateToken() {
-  // Simple random token — 16 hex chars
   return Array.from(crypto.getRandomValues(new Uint8Array(8)))
     .map(b => b.toString(16).padStart(2,'0')).join('');
 }
 
 function getViewerUrl(token) {
-  // viewer.html is in the same directory as index.html
   const base = window.location.href.replace(/\/[^\/]*$/, '/');
   return base + 'viewer.html?t=' + token + '&s=' + encodeURIComponent(btoa(state.scriptUrl)) + '&n=' + encodeURIComponent(state.sheetName);
 }
@@ -858,22 +840,22 @@ async function startSharing() {
     showToast('Hubungkan ke Apps Script terlebih dahulu.', 'error');
     return;
   }
-
   showSpinner('shareSpinner', true);
   document.getElementById('shareStartBtn').disabled = true;
-
-  // Generate token & write to sheet
   const token = generateToken();
   try {
     const res = await fetchWithTimeout(state.scriptUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ action: 'setShareToken', token }),
+      body: JSON.stringify({
+        action: 'setShareToken',
+        secret: INTERNAL_SECRET,   // ← tambahkan ini
+        token,
+      }),
     }, 10000);
     let data;
     try { data = await res.json(); } catch(e) { data = { success: true }; }
     if (data.success === false) throw new Error(data.error);
-
     state.shareToken = token;
     state.isSharing = true;
     saveState();
@@ -882,7 +864,6 @@ async function startSharing() {
   } catch(e) {
     showToast('Gagal mulai berbagi: ' + e.message, 'error');
   }
-
   showSpinner('shareSpinner', false);
   document.getElementById('shareStartBtn').disabled = false;
 }
@@ -890,33 +871,30 @@ async function startSharing() {
 async function stopSharing() {
   if (!confirm('Hentikan berbagi? Penonton tidak akan bisa lagi mengakses daftar ini.')) return;
   showSpinner('shareSpinner', true);
-
   try {
     if (!state.isLocalMode && state.scriptUrl) {
       await fetchWithTimeout(state.scriptUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'setShareToken', token: '' }),
+        body: JSON.stringify({ action: 'setShareToken', secret: INTERNAL_SECRET, token: '' }),
       }, 10000);
     }
   } catch(e) { /* silent */ }
-
   state.shareToken = '';
   state.isSharing = false;
   saveState();
   setShareUI(false);
   showSpinner('shareSpinner', false);
-  showToast('Berbagi dihentikan. Penonton tidak bisa lagi mengakses daftar.', 'info');
+  showToast('Berbagi dihentikan.', 'info');
 }
 
 function setShareUI(sharing) {
-  const panel = document.getElementById('sharePanel');
+  const panel    = document.getElementById('sharePanel');
   const startBtn = document.getElementById('shareStartBtn');
   const stopBtn  = document.getElementById('shareStopBtn');
   const urlRow   = document.getElementById('shareUrlRow');
   const title    = document.getElementById('sharePanelTitle');
   const desc     = document.getElementById('sharePanelDesc');
-
   if (sharing) {
     panel.classList.add('sharing');
     startBtn.style.display = 'none';
@@ -936,16 +914,13 @@ function setShareUI(sharing) {
 }
 
 function restoreShareUI() {
-  if (state.isSharing && state.shareToken) {
-    setShareUI(true);
-  } else {
-    setShareUI(false);
-  }
+  if (state.isSharing && state.shareToken) setShareUI(true);
+  else setShareUI(false);
 }
 
 function copyShareUrl() {
-  const url = getViewerUrl(state.shareToken);
-  navigator.clipboard.writeText(url).then(() => showToast('Link berhasil dicopy!', 'success'));
+  navigator.clipboard.writeText(getViewerUrl(state.shareToken))
+    .then(() => showToast('Link berhasil dicopy!', 'success'));
 }
 
 function openViewerPage() {
@@ -973,15 +948,21 @@ function buildDateFilter() {
     dates.map(d => `<option value="${esc(d)}" ${d === current ? 'selected' : ''}>${d}</option>`).join('');
 }
 
+// PATCH 2: getFilteredDonors — type-safe, tier always uppercase
 function getFilteredDonors() {
   const f  = state.activeFilter;
   const q  = (document.getElementById('filterSearch')?.value || '').toLowerCase().trim();
   const fd = document.getElementById('filterDate')?.value || '';
   return state.donors.filter(d => {
-    if (f === 'vip'  && d.tier !== 'VIP')  return false;
-    if (f === 'vvip' && d.tier !== 'VVIP') return false;
-    if (q && !d.name.toLowerCase().includes(q) && !d.mlId.toLowerCase().includes(q)) return false;
-    if (fd && (d.timestamp || '').split(',')[0].trim() !== fd) return false;
+    const tier = String(d.tier || '').trim().toUpperCase();
+    if (f === 'vip'  && tier !== 'VIP')  return false;
+    if (f === 'vvip' && tier !== 'VVIP') return false;
+    if (q) {
+      const nm = String(d.name  ?? '').toLowerCase().includes(q);
+      const id = String(d.mlId  ?? '').toLowerCase().includes(q);
+      if (!nm && !id) return false;
+    }
+    if (fd && String(d.timestamp || '').split(',')[0].trim() !== fd) return false;
     return true;
   });
 }
@@ -1009,7 +990,7 @@ function renderTable() {
     html += `<tr class="date-group-row"><td colspan="8">📅 ${esc(date)}</td></tr>`;
     items.forEach(d => {
       const globalIdx = state.donors.indexOf(d);
-      const tierClass = d.tier.toLowerCase();
+      const tierClass = String(d.tier || '').toLowerCase();
       const time = d.timestamp ? (d.timestamp.split(',')[1]?.trim() || '') : '';
       html += `
         <tr class="donor-row">
@@ -1019,7 +1000,7 @@ function renderTable() {
           <td style="color:var(--accent)">Rp ${formatRp(d.amount)}</td>
           <td>
             <span class="badge badge-${tierClass} clickable" onclick="openTierModal(${globalIdx})" title="Klik untuk ubah tier">
-              ${d.tier} ✎
+              ${esc(d.tier)} ✎
             </span>
           </td>
           <td>
@@ -1045,7 +1026,7 @@ function renderTable() {
 function exportCSV() {
   const filtered = getFilteredDonors();
   if (filtered.length === 0) { showToast('Tidak ada data untuk diexport.', 'error'); return; }
-  const header = ['No','Nama Donatur','ML ID','Jumlah Donasi (Rp)','Tier','Jumlah Game','Waktu'];
+  const header = ['No','Nama Donatur','ID Game','Jumlah Donasi (Rp)','Tier','Jumlah Game','Waktu'];
   const rows = filtered.map((d, i) => [i+1, d.name, d.mlId, d.amount, d.tier, d.games, d.timestamp]);
   const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
@@ -1130,7 +1111,6 @@ window.onload = async function() {
     else renderTable();
   }
 
-  // Close modal on overlay click
   document.getElementById('tierModal').addEventListener('click', function(e) {
     if (e.target === this) closeTierModal();
   });
