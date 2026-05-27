@@ -462,9 +462,6 @@
 // ════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════
-
-const INTERNAL_SECRET = '9de1076366b3a5fec92691aa1cc98095f851d58e19c34e40bb2523eeed25884a';
-
 const state = {
   scriptUrl: '',
   sheetName: 'Sheet1',
@@ -606,18 +603,16 @@ async function loadFromSheet() {
   showLoadBanner('Memuat data dari spreadsheet...');
   showSpinner('refreshSpinner', true);
   try {
-    const url = state.scriptUrl
-      + '?action=getAll'
-      + '&secret=' + encodeURIComponent(INTERNAL_SECRET)
-      + '&sheetName=' + encodeURIComponent(state.sheetName);
+    const url = state.scriptUrl + '?action=getAll&sheetName=' + encodeURIComponent(state.sheetName);
     const res = await fetchWithTimeout(url, { method: 'GET' }, 12000);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data.success && Array.isArray(data.rows)) {
+      // PATCH 1: normalisasi semua field saat data masuk
       state.donors = data.rows.map(r => ({
         rowIndex:  r.rowIndex,
         name:      String(r.name      ?? '').trim(),
-        mlId:      String(r.mlId      ?? '').trim(),
+        mlId:      String(r.mlId      ?? '').trim(),   // coerce number→string
         amount:    parseInt(r.amount)  || 0,
         tier:      String(r.tier      ?? 'VIP').trim().toUpperCase(),
         games:     parseInt(r.games)   || 0,
@@ -847,11 +842,7 @@ async function startSharing() {
     const res = await fetchWithTimeout(state.scriptUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: 'setShareToken',
-        secret: INTERNAL_SECRET,   // ← tambahkan ini
-        token,
-      }),
+      body: JSON.stringify({ action: 'setShareToken', token }),
     }, 10000);
     let data;
     try { data = await res.json(); } catch(e) { data = { success: true }; }
@@ -876,7 +867,7 @@ async function stopSharing() {
       await fetchWithTimeout(state.scriptUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'setShareToken', secret: INTERNAL_SECRET, token: '' }),
+        body: JSON.stringify({ action: 'setShareToken', token: '' }),
       }, 10000);
     }
   } catch(e) { /* silent */ }
