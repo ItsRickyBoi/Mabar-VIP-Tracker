@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DonTrack — ML Donation Tracker</title>
+<title>DonoTracker — Tracker Mabar VIP</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -352,8 +352,8 @@
           <input type="text" id="donorName" placeholder="Nama lengkap donatur" />
         </div>
         <div class="field">
-          <label>Mobile Legend ID</label>
-          <input type="text" id="mlId" placeholder="ID#Nickname" />
+          <label>ID Game</label>
+          <input type="text" id="mlId" placeholder="ID Game" />
         </div>
       </div>
       <div class="form-row">
@@ -673,7 +673,7 @@ async function submitDonation() {
   const games  = parseInt(document.getElementById('gameCount').textContent) || 0;
   hideAlert('alert3');
   if (!name)      { showAlert('alert3', 'Nama donatur tidak boleh kosong.'); return; }
-  if (!mlId)      { showAlert('alert3', 'Mobile Legend ID tidak boleh kosong.'); return; }
+  if (!mlId)      { showAlert('alert3', 'ID Game tidak boleh kosong.'); return; }
   if (amount < 1) { showAlert('alert3', 'Jumlah donasi harus lebih dari 0.'); return; }
 
   const timestamp = new Date().toLocaleString('id-ID');
