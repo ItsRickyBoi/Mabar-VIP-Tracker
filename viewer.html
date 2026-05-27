@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DonTrack — Cek Daftar Game</title>
+<title>DonoTracker — Cek Daftar Game</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -268,7 +268,7 @@
   <main>
     <div class="hero">
       <div class="hero-title">Cek <span class="hl">Game</span> Kamu</div>
-      <div class="hero-sub">Ketik namamu atau ML ID, lalu klik <strong>Cari</strong> atau tekan Enter.</div>
+      <div class="hero-sub">Ketik namamu atau ID game, lalu klik <strong>Cari</strong> atau tekan Enter.</div>
 
       <div class="search-box-wrap">
         <div class="search-box">
@@ -328,7 +328,7 @@
         <table>
           <thead>
             <tr>
-              <th>#</th><th>Nama</th><th>ML ID</th><th>Tier</th><th>Game</th><th>Waktu</th>
+              <th>#</th><th>Nama</th><th>ID Game</th><th>Tier</th><th>Game</th><th>Waktu</th>
             </tr>
           </thead>
           <tbody id="donorListBody">
@@ -535,7 +535,7 @@ function renderSearchResults(q) {
       <div class="no-results">
         Tidak ditemukan hasil untuk <strong>"${esc(q)}"</strong>
         ${tierFilter !== 'all' ? `<br>pada tier <strong>${tierFilter.toUpperCase()}</strong>` : ''}
-        <div class="hint">Coba cek ejaan, atau cari dengan nama lengkap / ML ID kamu.</div>
+        <div class="hint">Coba cek ejaan, atau cari dengan nama lengkap / ID game kamu.</div>
       </div>`;
     return;
   }
