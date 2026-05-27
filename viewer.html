@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DonTrack — Cek Daftar Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05060c;
+    --surface: #0b0d1a;
+    --surface2: #0f1122;
+    --border: #181d36;
+    --accent: #f5a623;
+    --vip: #3b82f6;
+    --vvip: #a855f7;
+    --text: #dde1f5;
+    --muted: #5a6180;
+    --success: #22c55e;
+    --glow-gold: rgba(245,166,35,0.12);
+    --glow-blue: rgba(59,130,246,0.12);
+    --glow-purple: rgba(168,85,247,0.12);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 100% 50% at 50% -5%, rgba(245,166,35,0.07) 0%, transparent 65%),
+      radial-gradient(ellipse 50% 40% at 10% 80%, rgba(59,130,246,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 90% 70%, rgba(168,85,247,0.05) 0%, transparent 60%);
+  }
+
+  header {
+    border-bottom: 1px solid var(--border);
+    background: rgba(11,13,26,0.95);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 100;
+    padding: 0 24px;
+  }
+  .header-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0;
+  }
+  .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); }
+  .logo span { color: var(--text); }
+  .live-badge {
+    display: flex; align-items: center; gap: 7px;
+    padding: 5px 14px; border-radius: 99px;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--success);
+  }
+  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  main { max-width: 900px; margin: 0 auto; padding: 36px 24px 60px; }
+
+  /* HERO SEARCH */
+  .hero { text-align: center; padding: 40px 0 32px; }
+  .hero-title { font-family: 'Rajdhani', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: 2px; margin-bottom: 8px; }
+  .hero-title .hl { color: var(--accent); }
+  .hero-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; }
+
+  .search-box-wrap { max-width: 520px; margin: 0 auto; display: flex; gap: 10px; }
+  .search-box { flex: 1; position: relative; }
+  .search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+  .search-box input {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text); font-family: 'Exo 2', sans-serif;
+    font-size: 1rem; padding: 13px 44px 13px 46px; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--glow-gold); }
+  .search-box input::placeholder { color: var(--muted); }
+  .search-clear {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--border); border: none;
+    color: var(--muted); font-size: 0.9rem; line-height: 1;
+    cursor: pointer; display: none; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .search-clear:hover { background: var(--accent); color: #05060c; }
+  .search-clear.visible { display: flex; }
+  .search-btn {
+    padding: 13px 22px; background: var(--accent); color: #05060c;
+    border: none; border-radius: 10px;
+    font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+    transition: filter 0.2s, transform 0.1s; white-space: nowrap;
+  }
+  .search-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+  /* Active search indicator */
+  .search-active-bar {
+    display: none; align-items: center; gap: 10px;
+    max-width: 520px; margin: 14px auto 0;
+    padding: 10px 16px; border-radius: 10px;
+    background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.25);
+    font-size: 0.85rem; color: var(--accent);
+  }
+  .search-active-bar.visible { display: flex; }
+  .search-active-label { flex: 1; }
+  .search-active-label strong { color: var(--text); }
+  .search-active-count { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1rem; }
+  .search-active-clear {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 0.85rem; padding: 3px 8px;
+    border-radius: 5px; transition: all 0.15s;
+  }
+  .search-active-clear:hover { background: rgba(232,57,94,0.15); color: #f87171; }
+
+  /* Tier pills */
+  .tier-pills { display: flex; justify-content: center; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+  .tier-pill {
+    padding: 7px 20px; border-radius: 99px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--muted);
+    font-family: 'Rajdhani', sans-serif; font-weight: 600;
+    font-size: 0.85rem; letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
+  }
+  .tier-pill:hover { border-color: var(--accent); color: var(--accent); }
+  .tier-pill.pill-all.active  { background: var(--glow-gold);   border-color: var(--accent); color: var(--accent); }
+  .tier-pill.pill-vip.active  { background: var(--glow-blue);   border-color: var(--vip);   color: var(--vip); }
+  .tier-pill.pill-vvip.active { background: var(--glow-purple); border-color: var(--vvip); color: var(--vvip); }
+
+  /* Stats */
+  .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; text-align: center; transition: border-color 0.2s; }
+  .stat-card:hover { border-color: rgba(245,166,35,0.3); }
+  .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 6px; }
+  .stat-value { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; }
+
+  /* Search result cards */
+  .result-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+    animation: fadeUp 0.2s ease both;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .result-card:hover { border-color: rgba(245,166,35,0.3); transform: translateY(-1px); }
+  .result-card.tier-vip  { border-left: 3px solid var(--vip); }
+  .result-card.tier-vvip { border-left: 3px solid var(--vvip); }
+
+  .rc-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+  .rc-avatar {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; flex-shrink: 0;
+  }
+  .rc-avatar.av-vip  { background: var(--glow-blue);   color: var(--vip);  border: 1px solid rgba(59,130,246,0.3); }
+  .rc-avatar.av-vvip { background: var(--glow-purple); color: var(--vvip); border: 1px solid rgba(168,85,247,0.3); }
+  .rc-info { min-width: 0; }
+  .rc-name { font-weight: 600; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
+  .rc-mlid { font-family: monospace; font-size: 0.8rem; color: var(--muted); }
+
+  .rc-right { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: flex-end; }
+  .rc-stat { text-align: right; }
+  .rc-stat-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 2px; }
+  .rc-stat-val { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; }
+
+  /* No results message */
+  .no-results {
+    text-align: center; color: var(--muted); padding: 36px 24px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; font-size: 0.9rem; margin-bottom: 10px;
+  }
+  .no-results strong { color: var(--text); }
+  .no-results .hint { margin-top: 8px; font-size: 0.82rem; color: var(--muted); }
+
+  /* Section divider */
+  .section-label {
+    font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent);
+    margin-bottom: 14px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Table */
+  .list-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-family: 'Rajdhani', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 11px 16px; border-bottom: 1px solid rgba(24,29,54,0.6); font-size: 0.88rem; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr.row-vip:hover  td { background: rgba(59,130,246,0.04); }
+  tr.row-vvip:hover td { background: rgba(168,85,247,0.04); }
+  .empty-row td { text-align: center; color: var(--muted); padding: 48px; }
+  .date-group-row td { background: rgba(245,166,35,0.04); color: var(--accent); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.75rem; letter-spacing: 1.5px; text-transform: uppercase; padding: 7px 16px; border-bottom: 1px solid var(--border); }
+  .rank-num { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.9rem; color: var(--muted); }
+  .game-num { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; color: var(--accent); }
+
+  /* Highlight matched text */
+  .hl-match { background: rgba(245,166,35,0.25); color: var(--accent); border-radius: 2px; padding: 0 2px; }
+
+  /* Badges */
+  .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .badge-vip  { background: var(--glow-blue);   color: var(--vip);  border: 1px solid rgba(59,130,246,0.3); }
+  .badge-vvip { background: var(--glow-purple); color: var(--vvip); border: 1px solid rgba(168,85,247,0.3); }
+
+  /* States */
+  .state-screen { display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 60vh; gap: 16px; padding: 40px; }
+  .state-screen.show { display: flex; }
+  .state-icon { font-size: 3rem; margin-bottom: 8px; }
+  .state-title { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; letter-spacing: 1px; }
+  .state-sub { color: var(--muted); font-size: 0.9rem; max-width: 380px; line-height: 1.6; }
+  .big-spinner { width: 40px; height: 40px; border-radius: 50%; border: 3px solid rgba(245,166,35,0.2); border-top-color: var(--accent); animation: spin 0.8s linear infinite; }
+  #mainContent { display: none; }
+  #mainContent.show { display: block; }
+
+  footer { text-align: center; padding: 32px 24px 48px; color: var(--muted); font-size: 0.78rem; }
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .hero-title { font-size: 1.6rem; }
+    .search-box-wrap { flex-direction: column; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .stats-bar .stat-card:last-child { grid-column: span 2; }
+    main { padding: 24px 16px 60px; }
+    .rc-right { justify-content: flex-start; }
+    header { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Don<span>Track</span></div>
+    <div class="live-badge" id="liveBadge" style="display:none;">
+      <div class="live-dot"></div>LIVE
+    </div>
+  </div>
+</header>
+
+<!-- LOADING -->
+<div class="state-screen show" id="stateLoading">
+  <div class="big-spinner"></div>
+  <div class="state-title">Memuat Daftar...</div>
+  <div class="state-sub">Sedang mengambil data dari spreadsheet.</div>
+</div>
+
+<!-- OFFLINE -->
+<div class="state-screen" id="stateOffline">
+  <div class="state-icon">📴</div>
+  <div class="state-title">Daftar Tidak Tersedia</div>
+  <div class="state-sub">Streamer belum mengaktifkan mode berbagi, atau link sudah tidak aktif.</div>
+</div>
+
+<!-- ERROR -->
+<div class="state-screen" id="stateError">
+  <div class="state-icon">⚠️</div>
+  <div class="state-title">Gagal Memuat</div>
+  <div class="state-sub" id="stateErrorMsg">Terjadi kesalahan saat memuat data.</div>
+  <button onclick="location.reload()" style="margin-top:12px; padding:10px 24px; background:var(--accent); color:#05060c; border:none; border-radius:8px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:0.95rem; letter-spacing:1px; cursor:pointer;">Coba Lagi</button>
+</div>
+
+<!-- MAIN -->
+<div id="mainContent">
+  <main>
+    <div class="hero">
+      <div class="hero-title">Cek <span class="hl">Game</span> Kamu</div>
+      <div class="hero-sub">Ketik namamu atau ML ID, lalu klik <strong>Cari</strong> atau tekan Enter.</div>
+
+      <div class="search-box-wrap">
+        <div class="search-box">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Contoh: yoyo atau 12345#Yoyo"
+                 autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+                 oninput="onSearchTyping()"
+                 onkeydown="if(event.key==='Enter') doSearch()" />
+          <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+        </div>
+        <button class="search-btn" onclick="doSearch()">Cari</button>
+      </div>
+
+      <!-- Shows active search state -->
+      <div class="search-active-bar" id="searchActiveBar">
+        <span class="search-active-label">Hasil pencarian: <strong id="searchActiveQuery"></strong></span>
+        <span class="search-active-count" id="searchActiveCount"></span>
+        <button class="search-active-clear" onclick="clearSearch()">✕ Hapus</button>
+      </div>
+
+      <div class="tier-pills">
+        <div class="tier-pill pill-all active" id="pill-all"  onclick="setTierFilter('all')">Semua</div>
+        <div class="tier-pill pill-vip"        id="pill-vip"  onclick="setTierFilter('vip')">VIP</div>
+        <div class="tier-pill pill-vvip"       id="pill-vvip" onclick="setTierFilter('vvip')">VVIP</div>
+      </div>
+    </div>
+
+    <!-- Search results section (shown when query active) -->
+    <div id="searchSection" style="display:none; margin-bottom:32px;">
+      <div class="section-label" id="searchSectionLabel">Hasil Pencarian</div>
+      <div id="searchResults"></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-label">Total Donatur</div>
+        <div class="stat-value" id="statTotal">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Donatur VIP</div>
+        <div class="stat-value" style="color:var(--vip)" id="statVip">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Donatur VVIP</div>
+        <div class="stat-value" style="color:var(--vvip)" id="statVvip">—</div>
+      </div>
+    </div>
+
+    <!-- Full list -->
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+      <div style="font-family:'Rajdhani',sans-serif; font-size:0.95rem; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent);">Daftar Lengkap</div>
+      <div style="font-size:0.78rem; color:var(--muted);" id="listSubtext"></div>
+    </div>
+    <div class="list-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Nama</th><th>ML ID</th><th>Tier</th><th>Game</th><th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="donorListBody">
+            <tr class="empty-row"><td colspan="6">Memuat...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:20px; font-size:0.78rem; color:var(--muted);" id="refreshNote"></div>
+  </main>
+  <footer>Powered by <a href="index.html">DonTrack</a> &nbsp;·&nbsp; Data diperbarui setiap 30 detik</footer>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// URL PARAMS
+// ══════════════════════════════════════════
+const params     = new URLSearchParams(location.search);
+const TOKEN      = params.get('t') || '';
+const SCRIPT_B64 = params.get('s') || '';
+const SHEET_NAME = params.get('n') || 'Sheet1';
+let SCRIPT_URL   = '';
+try { SCRIPT_URL = atob(SCRIPT_B64); } catch(e) {}
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let allDonors    = [];   // raw array from server, never mutated by search
+let tierFilter   = 'all';
+let activeQuery  = '';   // committed search query (empty = no search)
+let refreshTimer = null;
+let lastRefresh  = null;
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+async function init() {
+  if (!TOKEN || !SCRIPT_URL) { showState('offline'); return; }
+  await loadData();
+  refreshTimer = setInterval(loadData, 30000);
+}
+
+// ══════════════════════════════════════════
+// LOAD DATA
+// ══════════════════════════════════════════
+async function loadData() {
+  try {
+    const url = SCRIPT_URL
+      + '?action=getPublic'
+      + '&token=' + encodeURIComponent(TOKEN)
+      + '&sheetName=' + encodeURIComponent(SHEET_NAME);
+
+    const ctrl = new AbortController();
+    const tid  = setTimeout(() => ctrl.abort(), 12000);
+    const res  = await fetch(url, { signal: ctrl.signal });
+    clearTimeout(tid);
+
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    if (data.tokenInvalid || data.sharing === false) {
+      clearInterval(refreshTimer);
+      showState('offline');
+      return;
+    }
+    if (!data.success) throw new Error(data.error || 'Server error');
+
+    // Normalize all donor records once
+    allDonors = (data.rows || []).map(r => ({
+      name:      String(r.name      || '').trim(),
+      mlId:      String(r.mlId      || '').trim(),
+      tier:      String(r.tier      || 'VIP').trim().toUpperCase(),  // always uppercase
+      games:     parseInt(r.games)  || 0,
+      timestamp: String(r.timestamp || '').trim(),
+    }));
+
+    lastRefresh = new Date();
+    showState('content');
+    renderStats();
+    renderList();
+    // Re-run active search with fresh data
+    if (activeQuery) renderSearchResults(activeQuery);
+    updateRefreshNote();
+
+  } catch(e) {
+    if (document.getElementById('mainContent').classList.contains('show')) {
+      updateRefreshNote('⚠ Gagal refresh: ' + e.message);
+    } else {
+      document.getElementById('stateErrorMsg').textContent = 'Gagal memuat data: ' + e.message;
+      showState('error');
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+// SHOW STATE
+// ══════════════════════════════════════════
+function showState(s) {
+  ['stateLoading','stateOffline','stateError'].forEach(id =>
+    document.getElementById(id).classList.remove('show'));
+  document.getElementById('mainContent').classList.remove('show');
+
+  if (s === 'loading') document.getElementById('stateLoading').classList.add('show');
+  if (s === 'offline') document.getElementById('stateOffline').classList.add('show');
+  if (s === 'error')   document.getElementById('stateError').classList.add('show');
+  if (s === 'content') {
+    document.getElementById('mainContent').classList.add('show');
+    document.getElementById('liveBadge').style.display = 'flex';
+  }
+}
+
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+function renderStats() {
+  document.getElementById('statTotal').textContent = allDonors.length;
+  document.getElementById('statVip').textContent   = allDonors.filter(d => d.tier === 'VIP').length;
+  document.getElementById('statVvip').textContent  = allDonors.filter(d => d.tier === 'VVIP').length;
+}
+
+// ══════════════════════════════════════════
+// TIER FILTER
+// ══════════════════════════════════════════
+function setTierFilter(f) {
+  tierFilter = f;
+  ['all','vip','vvip'].forEach(id => {
+    const el = document.getElementById('pill-' + id);
+    el.className = 'tier-pill pill-' + id + (id === f ? ' active' : '');
+  });
+  renderList();
+  if (activeQuery) renderSearchResults(activeQuery);
+}
+
+// Returns donors matching current tier filter
+function byTier(donors) {
+  if (tierFilter === 'all') return donors;
+  return donors.filter(d => d.tier === tierFilter.toUpperCase());
+}
+
+// ══════════════════════════════════════════
+// SEARCH — typed but not yet committed
+// ══════════════════════════════════════════
+function onSearchTyping() {
+  const val = document.getElementById('searchInput').value;
+  document.getElementById('searchClear').classList.toggle('visible', val.length > 0);
+  // If user emptied the field, clear search immediately
+  if (!val.trim()) clearSearch();
+}
+
+// ══════════════════════════════════════════
+// SEARCH — committed (button / Enter)
+// ══════════════════════════════════════════
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) { clearSearch(); return; }
+  activeQuery = q;
+  renderSearchResults(q);
+}
+
+function clearSearch() {
+  activeQuery = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchClear').classList.remove('visible');
+  document.getElementById('searchActiveBar').classList.remove('visible');
+  document.getElementById('searchSection').style.display = 'none';
+  document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('searchInput').focus();
+}
+
+// ══════════════════════════════════════════
+// RENDER SEARCH RESULTS
+// ══════════════════════════════════════════
+function renderSearchResults(q) {
+  const lq = q.toLowerCase();
+
+  // Step 1: filter by tier first
+  const tierFiltered = byTier(allDonors);
+
+  // Step 2: filter by query (name OR mlId, case-insensitive)
+  const matches = tierFiltered.filter(d =>
+    d.name.toLowerCase().includes(lq) ||
+    d.mlId.toLowerCase().includes(lq)
+  );
+
+  // Update active bar
+  const bar = document.getElementById('searchActiveBar');
+  document.getElementById('searchActiveQuery').textContent = q;
+  document.getElementById('searchActiveCount').textContent =
+    matches.length > 0 ? matches.length + ' ditemukan' : '';
+  bar.classList.add('visible');
+
+  // Show search section
+  const section = document.getElementById('searchSection');
+  const resultsEl = document.getElementById('searchResults');
+  const labelEl = document.getElementById('searchSectionLabel');
+  section.style.display = 'block';
+
+  const tierLabel = tierFilter === 'all' ? '' : ` (${tierFilter.toUpperCase()})`;
+  labelEl.textContent = `Hasil "${q}"${tierLabel} — ${matches.length} ditemukan`;
+
+  if (matches.length === 0) {
+    resultsEl.innerHTML = `
+      <div class="no-results">
+        Tidak ditemukan hasil untuk <strong>"${esc(q)}"</strong>
+        ${tierFilter !== 'all' ? `<br>pada tier <strong>${tierFilter.toUpperCase()}</strong>` : ''}
+        <div class="hint">Coba cek ejaan, atau cari dengan nama lengkap / ML ID kamu.</div>
+      </div>`;
+    return;
+  }
+
+  resultsEl.innerHTML = matches.map(d => buildResultCard(d, lq)).join('');
+}
+
+function buildResultCard(d, lq) {
+  const tierClass = d.tier.toLowerCase();
+  const initial   = d.name.charAt(0).toUpperCase() || '?';
+  const date      = d.timestamp ? d.timestamp.split(',')[0].trim() : '—';
+  const time      = d.timestamp ? (d.timestamp.split(',')[1]?.trim() || '') : '';
+
+  return `
+    <div class="result-card tier-${esc(tierClass)}">
+      <div class="rc-left">
+        <div class="rc-avatar av-${esc(tierClass)}">${esc(initial)}</div>
+        <div class="rc-info">
+          <div class="rc-name">${highlight(d.name, lq)}</div>
+          <div class="rc-mlid">${highlight(d.mlId, lq)}</div>
+        </div>
+      </div>
+      <div class="rc-right">
+        <div class="rc-stat">
+          <div class="rc-stat-label">Tier</div>
+          <div><span class="badge badge-${esc(tierClass)}">${esc(d.tier)}</span></div>
+        </div>
+        <div class="rc-stat">
+          <div class="rc-stat-label">Jumlah Game</div>
+          <div class="rc-stat-val" style="color:var(--accent)">${d.games}</div>
+        </div>
+        <div class="rc-stat">
+          <div class="rc-stat-label">Waktu</div>
+          <div style="font-size:0.82rem; color:var(--muted)">${esc(date)}<br><span style="font-size:0.75rem">${esc(time)}</span></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// Highlights matched substring in text
+function highlight(text, lq) {
+  if (!lq) return esc(text);
+  const escaped = esc(text);
+  const lowerEscaped = escaped.toLowerCase();
+  const idx = lowerEscaped.indexOf(lq.toLowerCase());
+  if (idx === -1) return escaped;
+  return escaped.slice(0, idx)
+    + '<span class="hl-match">' + escaped.slice(idx, idx + lq.length) + '</span>'
+    + escaped.slice(idx + lq.length);
+}
+
+// ══════════════════════════════════════════
+// FULL LIST (table)
+// ══════════════════════════════════════════
+function renderList() {
+  const tbody   = document.getElementById('donorListBody');
+  const subtext = document.getElementById('listSubtext');
+  const filtered = byTier(allDonors);
+
+  subtext.textContent = filtered.length + ' donatur';
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Belum ada data.</td></tr>';
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  filtered.forEach(d => {
+    const date = d.timestamp ? d.timestamp.split(',')[0].trim() : 'Tidak Diketahui';
+    if (!groups[date]) groups[date] = [];
+    groups[date].push(d);
+  });
+
+  let html = '';
+  let n = 1;
+  Object.entries(groups).forEach(([date, items]) => {
+    html += `<tr class="date-group-row"><td colspan="6">📅 ${esc(date)}</td></tr>`;
+    items.forEach(d => {
+      const tc   = d.tier.toLowerCase();
+      const time = d.timestamp ? (d.timestamp.split(',')[1]?.trim() || '') : '';
+      html += `
+        <tr class="row-${esc(tc)}">
+          <td class="rank-num">${n++}</td>
+          <td style="font-weight:500">${esc(d.name)}</td>
+          <td style="font-family:monospace; font-size:0.8rem; color:var(--muted)">${esc(d.mlId)}</td>
+          <td><span class="badge badge-${esc(tc)}">${esc(d.tier)}</span></td>
+          <td><span class="game-num">${d.games}</span></td>
+          <td style="color:var(--muted); font-size:0.78rem">${esc(time)}</td>
+        </tr>`;
+    });
+  });
+  tbody.innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function updateRefreshNote(msg) {
+  const el = document.getElementById('refreshNote');
+  el.textContent = msg || (lastRefresh
+    ? 'Terakhir diperbarui: ' + lastRefresh.toLocaleTimeString('id-ID') + ' · Auto-refresh setiap 30 detik'
+    : '');
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+init();
+</script>
+</body>
+</html>
