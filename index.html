@@ -76,6 +76,8 @@
   .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
   .btn-danger { background: rgba(232,57,94,0.15); color: var(--accent2); border: 1px solid rgba(232,57,94,0.3); }
   .btn-danger:hover { background: rgba(232,57,94,0.25); }
+  .btn-merge { background: rgba(34,197,94,0.15); color: var(--success); border: 1px solid rgba(34,197,94,0.3); }
+  .btn-merge:hover { background: rgba(34,197,94,0.25); }
   .btn-sm { padding: 6px 14px; font-size: 0.82rem; letter-spacing: 1px; }
   .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
   .btn-row { display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
@@ -179,12 +181,71 @@
   .load-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.25); border-radius: 8px; font-size: 0.85rem; color: #93c5fd; margin-bottom: 16px; }
   .date-group-row td { background: rgba(245,166,35,0.05); color: var(--accent); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 0.8rem; letter-spacing: 1.5px; text-transform: uppercase; padding: 8px 14px; border-bottom: 1px solid var(--border); }
 
+  /* ── MERGE MODAL STYLES ── */
+  .merge-compare {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .merge-compare-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .merge-col {
+    padding: 14px 16px;
+  }
+  .merge-col + .merge-col {
+    border-left: 1px solid var(--border);
+  }
+  .merge-col-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .merge-col.merge-new .merge-col-label { color: var(--success); }
+  .merge-stat { margin-bottom: 6px; font-size: 0.82rem; color: var(--muted); }
+  .merge-stat strong {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-left: 4px;
+  }
+  .merge-col.merge-new .merge-stat strong { color: var(--success); }
+  .merge-divider { height: 1px; background: var(--border); }
+  .merge-donor-name {
+    padding: 12px 16px;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .merge-donor-name .merge-id {
+    font-family: monospace;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
   .modal-overlay { position: fixed; inset: 0; background: rgba(7,8,15,0.85); backdrop-filter: blur(4px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
   .modal-overlay.show { display: flex; }
   .modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px; max-width: 460px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.5); animation: modalIn 0.2s ease; }
   @keyframes modalIn { from { transform: scale(0.96) translateY(10px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
   .modal-title { font-family: 'Rajdhani', sans-serif; font-size: 1.3rem; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
-  .modal-sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 24px; }
+  .modal-sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 20px; }
+
+  /* merge modal accent border */
+  #mergeModal .modal { border-color: rgba(34,197,94,0.3); }
+  #mergeModal .modal-title { color: var(--success); }
 
   @media (max-width: 700px) {
     main { padding: 24px 16px; }
@@ -338,13 +399,22 @@
       <div class="form-row">
         <div class="field">
           <label>Nama Donatur</label>
-          <input type="text" id="donorName" placeholder="Nama lengkap donatur" />
+          <input type="text" id="donorName" placeholder="Nama lengkap donatur" oninput="checkDuplicate()" />
         </div>
         <div class="field">
           <label>ID Game</label>
-          <input type="text" id="mlId" placeholder="ID Game" />
+          <input type="text" id="mlId" placeholder="ID Game" oninput="checkDuplicate()" />
         </div>
       </div>
+
+      <!-- Duplicate warning banner -->
+      <div id="dupWarning" style="display:none; margin-bottom:12px;">
+        <div style="background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.25); border-radius:8px; padding:10px 14px; font-size:0.83rem; color:var(--success); display:flex; align-items:center; gap:10px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span id="dupWarningText"></span>
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="field">
           <label>Jumlah Donasi</label>
@@ -355,7 +425,7 @@
         </div>
         <div class="field">
           <label>Tier</label>
-          <select id="donTier" onchange="calcGames()">
+          <select id="donTier" onchange="calcGames(); checkDuplicate();">
             <option value="VIP">VIP</option>
             <option value="VVIP">VVIP</option>
           </select>
@@ -456,6 +526,46 @@
   </div>
 </div>
 
+<!-- MERGE MODAL -->
+<div class="modal-overlay" id="mergeModal">
+  <div class="modal">
+    <div class="modal-title">⚡ Donatur Sudah Ada!</div>
+    <div class="modal-sub" id="mergeModalSub">Ditemukan data dengan nama dan ID game yang sama.</div>
+
+    <div class="merge-compare">
+      <div class="merge-donor-name" id="mergeDonorName">
+        <span></span>
+      </div>
+      <div class="merge-divider"></div>
+      <div class="merge-compare-row">
+        <div class="merge-col">
+          <div class="merge-col-label">Data Saat Ini</div>
+          <div class="merge-stat">Donasi: <strong id="mergeOldAmount">—</strong></div>
+          <div class="merge-stat">Game Sisa: <strong id="mergeOldGames">—</strong></div>
+          <div class="merge-stat">Tier: <strong id="mergeOldTier">—</strong></div>
+        </div>
+        <div class="merge-col merge-new">
+          <div class="merge-col-label">✓ Setelah Digabung</div>
+          <div class="merge-stat">Donasi: <strong id="mergeNewAmount">—</strong></div>
+          <div class="merge-stat">Game Sisa: <strong id="mergeNewGames">—</strong></div>
+          <div class="merge-stat">Tambahan: <strong id="mergeAddAmount">—</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-merge" style="flex:1;" id="mergeConfirmBtn" onclick="confirmMerge()">
+        <span class="spinner" id="mergeSpinner"></span>
+        Gabung ke Data Lama
+      </button>
+      <button class="btn btn-secondary" style="flex:1;" onclick="confirmMergeAsNew()">Tambah Baru Saja</button>
+    </div>
+    <div class="btn-row" style="margin-top:12px;">
+      <button class="btn btn-secondary" style="width:100%;" onclick="closeMergeModal()">Batal</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -483,6 +593,9 @@ try {
   if (saved.shareToken)  state.shareToken  = saved.shareToken;
   if (saved.isSharing)   state.isSharing   = saved.isSharing;
 } catch(e){}
+
+// Merge modal state
+let mergePayload = null;
 
 // ════════════════════════════════════════════
 // NAVIGATION
@@ -573,7 +686,6 @@ function savePricing() {
 
 function renderPriceSummary() {
   const { vip, vvip } = state.pricing;
-  // PATCH 3: type-safe tier count
   const vipCount  = state.donors.filter(d => String(d.tier||'').trim().toUpperCase() === 'VIP').length;
   const vvipCount = state.donors.filter(d => String(d.tier||'').trim().toUpperCase() === 'VVIP').length;
   document.getElementById('priceSummary').innerHTML = `
@@ -608,11 +720,10 @@ async function loadFromSheet() {
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if (data.success && Array.isArray(data.rows)) {
-      // PATCH 1: normalisasi semua field saat data masuk
       state.donors = data.rows.map(r => ({
         rowIndex:  r.rowIndex,
         name:      String(r.name      ?? '').trim(),
-        mlId:      String(r.mlId      ?? '').trim(),   // coerce number→string
+        mlId:      String(r.mlId      ?? '').trim(),
         amount:    parseInt(r.amount)  || 0,
         tier:      String(r.tier      ?? 'VIP').trim().toUpperCase(),
         games:     parseInt(r.games)   || 0,
@@ -652,20 +763,152 @@ function adjustGames(delta) {
   state.currentGames = v;
 }
 
+// ── DUPLICATE CHECK (real-time, non-intrusive) ──
+function checkDuplicate() {
+  const name  = document.getElementById('donorName').value.trim();
+  const mlId  = document.getElementById('mlId').value.trim();
+  const warn  = document.getElementById('dupWarning');
+
+  if (!name || !mlId) { warn.style.display = 'none'; return; }
+
+  const match = state.donors.find(d =>
+    String(d.name || '').trim().toLowerCase() === name.toLowerCase() &&
+    String(d.mlId || '').trim().toLowerCase() === mlId.toLowerCase()
+  );
+
+  if (match) {
+    document.getElementById('dupWarningText').textContent =
+      `"${match.name}" (${match.mlId}) sudah ada di daftar ${match.tier} dengan ${match.games} game sisa. Klik "Tambah Donatur" untuk menggabungkan.`;
+    warn.style.display = 'block';
+  } else {
+    warn.style.display = 'none';
+  }
+}
+
+// ── SUBMIT (with merge detection) ──
 async function submitDonation() {
   const name   = document.getElementById('donorName').value.trim();
   const mlId   = document.getElementById('mlId').value.trim();
   const amount = parseInt(document.getElementById('donAmount').value) || 0;
   const tier   = document.getElementById('donTier').value;
   const games  = parseInt(document.getElementById('gameCount').textContent) || 0;
+
   hideAlert('alert3');
   if (!name)      { showAlert('alert3', 'Nama donatur tidak boleh kosong.'); return; }
   if (!mlId)      { showAlert('alert3', 'ID Game tidak boleh kosong.'); return; }
   if (amount < 1) { showAlert('alert3', 'Jumlah donasi harus lebih dari 0.'); return; }
 
+  // Cari match: nama (case-insensitive) + ID game (case-insensitive)
+  const matchIdx = state.donors.findIndex(d =>
+    String(d.name || '').trim().toLowerCase() === name.toLowerCase() &&
+    String(d.mlId || '').trim().toLowerCase() === mlId.toLowerCase()
+  );
+
   const timestamp = new Date().toLocaleString('id-ID');
   const entry = { name, mlId, amount, tier, games, timestamp };
 
+  if (matchIdx !== -1) {
+    // Ada match → tampilkan modal konfirmasi merge
+    const existing = state.donors[matchIdx];
+
+    // ── BUGFIX: Hitung game dari donasi BARU saja, lalu tambahkan ke sisa game yang ada
+    // Gunakan tier dari data LAMA untuk menentukan harga per game
+    const existingTier = String(existing.tier || 'VIP').toUpperCase();
+    const mergePrice   = existingTier === 'VVIP' ? state.pricing.vvip : state.pricing.vip;
+    const addedGames   = mergePrice > 0 ? Math.floor(amount / mergePrice) : games;
+    const mergedGames  = (existing.games || 0) + addedGames;
+    const mergedAmount = (existing.amount || 0) + amount;
+
+    mergePayload = { entry, matchIdx, mergedAmount, mergedGames, addedGames };
+
+    // Isi konten modal
+    document.getElementById('mergeDonorName').innerHTML =
+      `<span style="font-weight:700">${esc(existing.name)}</span>
+       <span class="merge-id">${esc(existing.mlId)}</span>
+       <span class="badge badge-${existingTier.toLowerCase()}" style="margin-left:auto">${esc(existingTier)}</span>`;
+    document.getElementById('mergeModalSub').textContent =
+      `Donasi baru Rp ${formatRp(amount)} akan digabung ke data yang sudah ada.`;
+    document.getElementById('mergeOldAmount').textContent = 'Rp ' + formatRp(existing.amount);
+    document.getElementById('mergeOldGames').textContent  = existing.games + ' game';
+    document.getElementById('mergeOldTier').textContent   = existingTier;
+    document.getElementById('mergeNewAmount').textContent = 'Rp ' + formatRp(mergedAmount);
+    document.getElementById('mergeNewGames').textContent  = mergedGames + ' game';
+    document.getElementById('mergeAddAmount').textContent = '+' + addedGames + ' game (Rp ' + formatRp(amount) + ')';
+
+    document.getElementById('mergeModal').classList.add('show');
+    return;
+  }
+
+  // Tidak ada match → langsung tambah baru
+  await doSubmit(entry);
+}
+
+// ── MERGE: Gabung ke data lama ──
+async function confirmMerge() {
+  if (!mergePayload) return;
+
+  const { entry, matchIdx, mergedAmount, mergedGames } = mergePayload;
+  const existing = state.donors[matchIdx];
+
+  // Update state lokal dulu
+  existing.amount = mergedAmount;
+  existing.games  = mergedGames;
+
+  document.getElementById('mergeConfirmBtn').disabled = true;
+  showSpinner('mergeSpinner', true);
+
+  if (!state.isLocalMode && state.scriptUrl && existing.rowIndex) {
+    try {
+      const res = await fetchWithTimeout(state.scriptUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action:       'mergeRow',
+          sheetName:    state.sheetName,
+          rowIndex:     existing.rowIndex,
+          amount:       mergedAmount,
+          games:        mergedGames,
+          lastDonation: entry.amount,
+          timestamp:    entry.timestamp,
+        }),
+      }, 12000);
+      let data;
+      try { data = await res.json(); } catch(e) { data = { success: true }; }
+      if (data.success === false) throw new Error(data.error || 'Server error');
+      showToast(`${existing.name} diperbarui! Sisa game: ${mergedGames}`, 'success');
+    } catch(e) {
+      showToast('Gagal sync ke spreadsheet: ' + e.message, 'error');
+    }
+  } else {
+    showToast(`${existing.name} diperbarui! Sisa game: ${mergedGames} (lokal)`, 'success');
+  }
+
+  showSpinner('mergeSpinner', false);
+  document.getElementById('mergeConfirmBtn').disabled = false;
+
+  closeMergeModal();
+  buildDateFilter();
+  renderTable();
+  renderPriceSummary();
+  resetForm();
+  mergePayload = null;
+}
+
+// ── MERGE: Tambah sebagai entri baru ──
+function confirmMergeAsNew() {
+  if (!mergePayload) return;
+  const { entry } = mergePayload;
+  mergePayload = null;
+  closeMergeModal();
+  doSubmit(entry);
+}
+
+function closeMergeModal() {
+  document.getElementById('mergeModal').classList.remove('show');
+}
+
+// ── Actual submit (append new row) ──
+async function doSubmit(entry) {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   showSpinner('spinner3', true);
@@ -685,7 +928,7 @@ async function submitDonation() {
       buildDateFilter();
       renderTable();
       renderPriceSummary();
-      showToast(`${name} ditambahkan! (${games} game)`, 'success');
+      showToast(`${entry.name} ditambahkan! (${entry.games} game)`, 'success');
       resetForm();
     } catch(e) {
       showAlert('alert3', 'Gagal menyimpan: ' + e.message);
@@ -695,9 +938,10 @@ async function submitDonation() {
     buildDateFilter();
     renderTable();
     renderPriceSummary();
-    showToast(`${name} ditambahkan! (${games} game — lokal)`, 'success');
+    showToast(`${entry.name} ditambahkan! (${entry.games} game — lokal)`, 'success');
     resetForm();
   }
+
   showSpinner('spinner3', false);
   btn.disabled = false;
 }
@@ -709,6 +953,7 @@ function resetForm() {
   document.getElementById('donTier').value = 'VIP';
   document.getElementById('calcBase').textContent = '0';
   document.getElementById('gameCount').textContent = '0';
+  document.getElementById('dupWarning').style.display = 'none';
   state.currentGames = 0;
   hideAlert('alert3');
 }
@@ -939,7 +1184,6 @@ function buildDateFilter() {
     dates.map(d => `<option value="${esc(d)}" ${d === current ? 'selected' : ''}>${d}</option>`).join('');
 }
 
-// PATCH 2: getFilteredDonors — type-safe, tier always uppercase
 function getFilteredDonors() {
   const f  = state.activeFilter;
   const q  = (document.getElementById('filterSearch')?.value || '').toLowerCase().trim();
@@ -1104,6 +1348,9 @@ window.onload = async function() {
 
   document.getElementById('tierModal').addEventListener('click', function(e) {
     if (e.target === this) closeTierModal();
+  });
+  document.getElementById('mergeModal').addEventListener('click', function(e) {
+    if (e.target === this) closeMergeModal();
   });
 };
 </script>
